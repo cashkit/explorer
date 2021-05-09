@@ -1,0 +1,21 @@
+version: '3'
+services:
+  proxy:
+    build:
+      context: ./envoy
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+  # webclient:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - '3000:3000'
+  #   restart: on-failure
+  #   volumes:
+  #     - /app/node_modules
+  #     - ./webclient:/app
+  #   depends_on:
+  #     - proxy
+  #   tty: true
