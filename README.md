@@ -37,6 +37,24 @@ npm start
   - Server and Reverse Proxy.
 - gPRC
 - Web gRPC
+- Redux: Actions, Reducers, Saga
+- History
+- Scripts
+
+<h3> Architecture </h3>
+
+- Components: They are dumb, they only display the data provided. It may contain some conditional operators. 
+
+- Containers: They are smart components the are aware of the props. (Props could be directly from the parent or from the store.) These smart components can make calls to business logic code or update the app state.
+- Views: These components contain containers and are also aware of the app state.
+- Redux: Consists of Actions, Reducers, Sagas and other business logic.
+- Utils: Consists of helper functions.
+- Protos: Used to connect to gRPC Server.
+- Docker/Docker Compose: Containerises the application.
+- Envoy: Server and reverse Proxy. Also responsible for translation from HTTP/1 to HTTP/2 and communication with the gRPC server.
+- Scripts: Contains scripts to automate certain aspects of the application.
+  - `reactdev.sh`
+  - `genproto.sh`
 
 <h3> Why Envoy? </h3>
 
