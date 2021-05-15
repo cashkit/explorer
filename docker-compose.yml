@@ -4,12 +4,13 @@ services:
     build:
       context: ./envoy
       dockerfile: Dockerfile
+    restart: on-failure
     ports:
       - '8080:8080'
   # webclient:
   #   build:
   #     context: .
-  #     dockerfile: Dockerfile.dev
+  #     dockerfile: Dockerfile
   #   ports:
   #     - '3000:3000'
   #   restart: on-failure

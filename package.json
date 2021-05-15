@@ -10,11 +10,11 @@
     "@types/node": "^12.20.12",
     "@types/react": "^17.0.5",
     "@types/react-dom": "^17.0.3",
+    "@types/styled-components": "^5.1.9",
     "google-protobuf": "^3.16.0",
     "grpc-web": "^1.2.1",
     "history": "^5.0.0",
     "http2": "^3.3.7",
-    "protoc-gen-grpc-web": "^1.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-loader": "^4.13.0",
@@ -24,6 +24,7 @@
     "redux": "^4.1.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-saga": "^1.1.3",
+    "styled-components": "^5.3.0",
     "typescript": "^4.2.4",
     "web-vitals": "^1.1.2"
   },
@@ -31,12 +32,23 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint:css":"stylelint './src/**/*.tsx'"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
     ]
   },
   "browserslist": {
@@ -52,6 +64,13 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.1.7"
+    "@types/react-router-dom": "^5.1.7",
+    "babel-plugin-styled-components": "^1.12.0",
+    "jest-styled-components": "^7.0.4",
+    "stylelint": "^13.13.1",
+    "stylelint-config-recommended": "^5.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0",
+    "tape": "^5.2.2"
   }
 }

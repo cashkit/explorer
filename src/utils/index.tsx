@@ -1,17 +1,11 @@
-import { take, fork  } from 'redux-saga/effects';
+import { actionHelper, sagaWatcherHelper } from './sagahelpers';
+import {hexToU8, base64toHex, base64toU8, u8toHex} from './clienthelper';
 
-export const actionHelper = function(type, args) {
-	return {
-		type,
-		...args
-	};
-};
-
-export const sagaWatcherHelper = function(worker, type) {
-	return function*() {
-		while (true) {
-			const action = yield take(type);
-			yield fork(worker, action);
-		}
-	};
-};
+export {
+	actionHelper,
+	sagaWatcherHelper,
+    hexToU8,
+	base64toHex,
+	base64toU8,
+	u8toHex
+}

@@ -1,13 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
-import * as grpcWeb from "grpc-web";
-import * as bchrpc from '../../protos/BchrpcServiceClientPb';
-import * as bchrpc_pb from '../../protos/bchrpc_pb';
+import { GrpcManager } from '../../managers';
 import {updateErrorState} from '../../redux';
 
 interface MempoolProps {
-   client: bchrpc.bchrpcClient
+   client: GrpcManager
    updateErrorState: Function,
    client_error: string | null
 }
@@ -28,7 +25,7 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
   }
 
   componentDidMount(){
-    this.getMempoolInfo().then((res) => {
+    this.props.client.getMempoolInfo().then((res) => {
       this.setState({
         mempoolSize: res.getSize(),
       })
@@ -37,7 +34,7 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
       this.props.updateErrorState({client_error: JSON.stringify(err)})
     })
 
-    this.getMempool().then((res) => {
+    this.props.client.getMempool({ fullTransactions: false }).then((res) => {
       this.setState({
         mempool: JSON.stringify(res.toObject()),
       })
@@ -47,33 +44,6 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
     })
   }
   
-  public getMempoolInfo(): Promise<bchrpc_pb.GetMempoolInfoResponse> {
-    return new Promise((resolve, reject) => {
-        this.props.client.getMempoolInfo(
-            new bchrpc_pb.GetMempoolInfoRequest(),
-            null,
-            (err: grpcWeb.Error, response: bchrpc_pb.GetMempoolInfoResponse) => {
-                if (err !== null) { reject(err); } else {
-                    resolve(response!);
-                }
-            }
-        );
-    });
-  }
-
-  public getMempool(): Promise<bchrpc_pb.GetMempoolResponse> {
-    return new Promise((resolve, reject) => {
-        this.props.client.getMempool(
-            new bchrpc_pb.GetMempoolRequest(),
-            null,
-            (err: grpcWeb.Error, response: bchrpc_pb.GetMempoolResponse) => {
-                if (err !== null) { reject(err); } else {
-                    resolve(response!);
-                }
-            }
-        );
-    });
-  }
   
   // Need to perform the check for `client_error` because once the component is rendered,
   // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
@@ -83,7 +53,7 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
   render(){
-    const { mempoolSize, mempool } = this.state;
+    const { mempoolSize } = this.state;
     const {client_error} = this.props;
     if (client_error !== null){
       return <div></div>
@@ -94,9 +64,9 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
               Mempool Size: <code>{mempoolSize}</code>
           </p>
 
-          <p>
+          {/* <p>
               Mempool: <code>{mempool}</code>
-          </p>
+          </p> */}
       </div>
     );
   }

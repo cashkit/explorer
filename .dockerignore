@@ -1,0 +1,18 @@
+# Heavy files
+/node_modules
+/build
+
+# Git files
+.git
+.gitignore
+
+*.md
+
+.dockerignore
+.travis.yml
+Dockerfile
+CHANGES
+LICENSE
+README.md
+
+

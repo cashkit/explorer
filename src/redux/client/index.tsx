@@ -1,8 +1,8 @@
 import { put  } from 'redux-saga/effects';
-import * as bchrpc from '../../protos/BchrpcServiceClientPb';
 import { sagaWatcherHelper } from '../../utils';
 import { BASE_URL } from '../../configs';
-
+import { GrpcManager } from '../../managers';
+ 
 // Error types
 enum ClientErrors{
     NOT_INITIATED = "NOT_INITIATED",
@@ -56,7 +56,11 @@ export const AppReducer = (state = INITIAL_STATE, action) => {
 
 export function* workerCreateNewClient() {
 	try {
-		const client = new bchrpc.bchrpcClient(BASE_URL)
+		const client = new GrpcManager({
+			url: BASE_URL,
+			testnet: false,
+			options: null
+		})
 		if (client){
 			yield put({
 				type: CREATE_GRPC_CLIENT_SUCCESS,

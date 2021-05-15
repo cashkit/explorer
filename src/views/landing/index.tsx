@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { BlockchainInfo, Mempool } from '../../containers';
+import { BlockchainInfo, Mempool, Transactions } from '../../containers';
 
 import { createNewClient } from '../../redux';
 import * as bchrpc from '../../protos/BchrpcServiceClientPb';
@@ -56,6 +56,14 @@ class Landing extends React.Component<AppProps, AppState>{
       return <BlockchainInfo/>
     }
 
+    renderTransactionsInfo = () => {
+      const { client_error } = this.props;
+      if (client_error !== null){
+          return undefined 
+      }
+      return <Transactions/>
+    }
+
     render(){
       return (
         <div className="App">
@@ -68,6 +76,7 @@ class Landing extends React.Component<AppProps, AppState>{
           <div>
             {this.renderBlockchainInfo()}
             {this.renderMempoolInfo()}
+            {this.renderTransactionsInfo()}
           </div>
         </div>
       )

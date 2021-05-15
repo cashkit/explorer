@@ -1,4 +1,8 @@
-<h1> Cashweb </h1>
+<h1> Cash Web </h1>
+
+[![style: styled-components](https://img.shields.io/badge/style-%F0%9F%92%85%20styled--components-orange.svg?colorB=daa357&colorA=db748e)](https://github.com/styled-components/styled-components)
+
+
 
 Note: This project is under-development. Stuff can break.
 
@@ -61,3 +65,7 @@ npm start
 After doing a lot of research and figuring out many ways to interact with gRPC server through web client. I ended up following this approach:
 
 - With Envoy (Current approach). [grpc/grpc-web](https://github.com/grpc/grpc-web/tree/master/net/grpc/gateway/examples/helloworld#configure-the-proxy)
+
+<h3> Testing </h3>
+
+- Snapshot Testing
