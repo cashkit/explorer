@@ -73,8 +73,6 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
     </Fragment>
   }
 
-
-
   // Need to perform the check for `client_error` because once the component is rendered,
   // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
   // and in the parent component we have added a statement to render undefined/some other 

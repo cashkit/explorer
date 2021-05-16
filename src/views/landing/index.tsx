@@ -102,22 +102,33 @@ class Landing extends React.Component<AppProps, AppState>{
       )
     }
 
+
+    /**
+     * According to the Docs, React Strict mode currently helps with:
+     * - Identifying components with unsafe lifecycles
+     * - Warning about legacy string ref API usage
+     * - Warning about deprecated findDOMNode usage
+     * - Detecting unexpected side effects
+     * - Detecting legacy context API
+     */
     render(){
       return (
         <div className="App">
-          <header className="App-header" style={{display: 'flex', alignItems: 'stretch'}}>
-            {this.renderError()}
-            <h1>
-              Cash Kit
-            </h1>
-          </header>
-          <div>
-            <Profiler id="BlockchainInfo" onRender={this.onRenderBlockchainInfoCallback}>
-            {this.renderBlockchainInfo()}
-            </Profiler>
-            {this.renderTransactionsInfo()}
-            {this.renderMempoolInfo()}
-          </div>
+          <React.StrictMode>
+            <header className="App-header" style={{display: 'flex', alignItems: 'stretch'}}>
+              {this.renderError()}
+              <h1>
+                Cash Kit
+              </h1>
+            </header>
+            <div>
+              <Profiler id="BlockchainInfo" onRender={this.onRenderBlockchainInfoCallback}>
+              {this.renderBlockchainInfo()}
+              </Profiler>
+              {this.renderTransactionsInfo()}
+              {this.renderMempoolInfo()}
+            </div>
+          </React.StrictMode>
         </div>
       )
     }
