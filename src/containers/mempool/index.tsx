@@ -3,6 +3,18 @@ import { connect } from 'react-redux';
 import { GrpcManager } from '../../managers';
 import {updateErrorState} from '../../redux';
 
+import styled from 'styled-components'
+
+const Division = styled.div`
+  background: transparent;
+  border-radius: 2px;
+  border: 1px solid palevioletred;
+  color: palevioletred;
+  margin: 0 1em;
+  padding: 0.25em 1em;
+  text-align: left;
+`
+
 interface MempoolProps {
    client: GrpcManager
    updateErrorState: Function,
@@ -66,11 +78,11 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
   
   renderMempool = () => {
     // Make sure the key is very unique.
-    return <Fragment>
+    return <Division>
       {this.state.mempool.map((txn, transactionHash) => {
         return <div key={transactionHash}>{JSON.stringify(txn)}</div>
       })}
-    </Fragment>
+    </Division>
   }
 
   // Need to perform the check for `client_error` because once the component is rendered,
@@ -88,13 +100,12 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
     }
     return (
       <div>
-          <Profiler id="Mempool" onRender={this.onRenderMempoolCallback}>
-            {this.renderMempool()}
-          </Profiler>
           <p>
               Mempool Size: <code>{mempoolSize}</code>
           </p>
-
+          <Profiler id="Mempool" onRender={this.onRenderMempoolCallback}>
+            {this.renderMempool()}
+          </Profiler>
       </div>
     );
   }

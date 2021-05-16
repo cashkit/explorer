@@ -11,12 +11,12 @@ interface TransactionsProps {
 }
 
 interface TransactionsState {
-    transactions: any
+    transactions: Array<string>
 }
 
 class Transactions extends React.Component<TransactionsProps, TransactionsState>{
 
-  constructor(props: any){
+  constructor(props: TransactionsProps){
     super(props)
     this.state ={
         transactions: []
@@ -35,17 +35,23 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
               let b2u = base64toU8(base_tx).reverse()
               let tx_hash = u8toHex(b2u)
               let txs = [tx_hash, ...that.state.transactions]
-              if (txs.length > 10){
+              if (txs.length > 30){
                 txs.pop()
               }
               that.setState({ transactions: txs})
         });
+        // TODO: Remember to call the cancel actions to stop the stream.
         // res.cancel()
     }).catch((err) => {
         console.log(err)
         this.props.updateErrorState({client_error: JSON.stringify(err)})
     })
-    
+  }
+
+  componentWillUnmount(){
+    this.props.client.subscribeTransactions({ unsubscribe: true })
+                        .then((res) => console.log(res))
+                        .catch((err) => console.log(err))
   }
   
   /**
@@ -68,6 +74,9 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
       )
   }
 
+  /**
+   * Fetch a unique transaction.
+   */
   onClickTransactionFetch = () => {
     if (this.state.transactions.length > 1){
         this.props.client.getTransaction({ hash: this.state.transactions[0]
@@ -107,11 +116,11 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
       return <div></div>
     }
     return (
-      <div>
+      <Fragment>
         <Profiler id="Transactions" onRender={this.onRenderTransactionsCallback}>
           {this.renderTransactions()}
         </Profiler>
-      </div>
+      </Fragment>
     );
   }
 }
