@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment, Profiler } from 'react';
 import { connect } from 'react-redux';
 import { GrpcManager } from '../../managers';
 import {updateErrorState} from '../../redux';
@@ -48,8 +48,27 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
     
   }
   
+  /**
+   * @param id - the "id" prop of the Profiler tree that has just committed.
+   * @param phase - either "mount" (if the tree just mounted) or "update" (if it re-rendered).
+   * @param actualDuration - time spent rendering the committed update
+   * @param baseDuration - estimated time to render the entire subtree without memoization
+   * @param startTime - when React began rendering this update
+   * @param commitTime - when React committed this update
+   * @param interactions - the Set of interactions belonging to this update
+   */
+     onRenderTransactionsCallback = (id, phase, actualDuration, baseDuration, startTime, commitTime, interactions) => {
+      console.log(`[INFO] PROFILER: ID: ${id}
+        PHASE: ${phase}
+        ACTUAL_DURATION: ${actualDuration}, 
+        BASE_DURATION: ${baseDuration}
+        START_TIME: ${startTime}
+        COMMIT_TIME: ${commitTime}
+        INTERACTIONS: ${interactions.size}`
+      )
+  }
 
-  onClickTransactionFetcg = () => {
+  onClickTransactionFetch = () => {
     if (this.state.transactions.length > 1){
         this.props.client.getTransaction({ hash: this.state.transactions[0]
           }).then((res) => {
@@ -60,6 +79,20 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
         })
       }
   }
+
+  renderTransactions = () => {
+    const { transactions } = this.state;
+    // Make sure the key is very unique.
+    return (
+      <Fragment>
+        {transactions.map((transaction) => {
+          return  <p key={transaction}>
+            transaction: <code>{transaction}</code>
+          </p>
+        })}
+      </Fragment>
+    )
+  }
   
   // Need to perform the check for `client_error` because once the component is rendered,
   // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
@@ -69,19 +102,15 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
   render(){
-    const { transactions } = this.state;
     const {client_error} = this.props;
     if (client_error !== null){
       return <div></div>
     }
     return (
       <div>
-        {transactions.map((transactions, idx) => {
-          return  <p key={idx}>
-          transactions: <code>{transactions}</code>
-          </p>
-        })}
-
+        <Profiler id="Transactions" onRender={this.onRenderTransactionsCallback}>
+          {this.renderTransactions()}
+        </Profiler>
       </div>
     );
   }

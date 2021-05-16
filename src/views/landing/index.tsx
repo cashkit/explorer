@@ -83,7 +83,6 @@ class Landing extends React.Component<AppProps, AppState>{
     }
 
     /**
-     * Create a client.
      * @param id - the "id" prop of the Profiler tree that has just committed.
      * @param phase - either "mount" (if the tree just mounted) or "update" (if it re-rendered).
      * @param actualDuration - time spent rendering the committed update
@@ -116,8 +115,8 @@ class Landing extends React.Component<AppProps, AppState>{
             <Profiler id="BlockchainInfo" onRender={this.onRenderBlockchainInfoCallback}>
             {this.renderBlockchainInfo()}
             </Profiler>
-            {this.renderMempoolInfo()}
             {this.renderTransactionsInfo()}
+            {this.renderMempoolInfo()}
           </div>
         </div>
       )
