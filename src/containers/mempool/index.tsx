@@ -16,8 +16,8 @@ const Division = styled.div`
 `
 
 interface MempoolProps {
-   client: GrpcManager
-   updateErrorState: Function,
+   client: GrpcManager,
+   updateErrorState: ({}) => void,
    client_error: string | null
 }
 

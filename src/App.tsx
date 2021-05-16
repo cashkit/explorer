@@ -12,10 +12,10 @@ import './App.css';
 
 const Error = React.lazy(() => import('./views/error'));
 
-var hist = createBrowserHistory();
+const hist = createBrowserHistory();
 
 
-class CashWeb extends React.Component<{}, {}>{
+class CashWeb extends React.Component{
   render(){
     return (
       <Provider store={store}>

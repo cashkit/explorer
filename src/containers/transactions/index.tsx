@@ -5,8 +5,8 @@ import {updateErrorState} from '../../redux';
 import { base64toU8, u8toHex } from '../../utils';
 
 interface TransactionsProps {
-   client: GrpcManager
-   updateErrorState: Function,
+   client: GrpcManager,
+   updateErrorState: ({}) => void,
    client_error: string | null
 }
 
@@ -24,17 +24,17 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
   }
 
   componentDidMount(){
-    var that = this;
+    const that = this;
     this.props.client.subscribeTransactions({ includeMempoolAcceptance: true,
         includeBlockAcceptance: true,
         // includeSerializedTxn: true,
         }).then((res) => {
             res.on('data', function(response){
-              let base_tx = response.getUnconfirmedTransaction()?.getTransaction()?.getHash_asB64()
+              const base_tx = response.getUnconfirmedTransaction()?.getTransaction()?.getHash_asB64()
               // @ts-ignore
-              let b2u = base64toU8(base_tx).reverse()
-              let tx_hash = u8toHex(b2u)
-              let txs = [tx_hash, ...that.state.transactions]
+              const b2u = base64toU8(base_tx).reverse()
+              const tx_hash = u8toHex(b2u)
+              const txs = [tx_hash, ...that.state.transactions]
               if (txs.length > 30){
                 txs.pop()
               }

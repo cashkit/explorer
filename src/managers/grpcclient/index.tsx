@@ -5,7 +5,7 @@ import * as bchrpc from "../../protos/bchrpc_pb";
 import * as bchrpc_pb_service from "../../protos/BchrpcServiceClientPb";
 import * as util from "../../utils";
 
-export default class GrpcManager {
+export default class GrpcManager{
 
     public client: bchrpc_pb_service.bchrpcClient;
 

@@ -11,6 +11,7 @@
     "@types/react": "^17.0.5",
     "@types/react-dom": "^17.0.3",
     "@types/styled-components": "^5.1.9",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "google-protobuf": "^3.16.0",
     "grpc-web": "^1.2.1",
     "history": "^5.0.0",

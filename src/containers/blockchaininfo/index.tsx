@@ -17,31 +17,41 @@ const Division = styled.div`
   text-align: left;
 `
 
-function InfoComponent(props) {
+function InfoComponent({ bitcoinNet, bestHeight, bestBlockHash,
+  difficulty, medianTime, txIndex, addrIndex, slpIndex }
+  : { bitcoinNet?: GetBlockchainInfoResponse.BitcoinNet,
+    bestHeight: number,
+    bestBlockHash: Uint8Array | string,
+    difficulty: number,
+    medianTime: number,
+    txIndex: boolean,
+    addrIndex: boolean,
+    slpIndex: boolean,
+   }) {
   return (<div>
     <Division>
-      bitcoinNet: <code>{props.bitcoinNet}</code>
+      bitcoinNet: <code>{bitcoinNet}</code>
     </Division>
     <Division>
-      bestHeight: <code>{props.bestHeight}</code>
+      bestHeight: <code>{bestHeight}</code>
     </Division>
     <Division>
-      bestBlockHash: <code>{props.bestBlockHash}</code>
+      bestBlockHash: <code>{bestBlockHash}</code>
     </Division>
     <Division>
-      difficulty: <code>{props.difficulty}</code>
+      difficulty: <code>{difficulty}</code>
     </Division>
     <Division>
-      medianTime: <code>{props.medianTime}</code>
+      medianTime: <code>{medianTime}</code>
     </Division>
     <Division>
-      txIndex: <code>{props.txIndex ? 'True' : 'False'}</code>
+      txIndex: <code>{txIndex ? 'True' : 'False'}</code>
     </Division>
     <Division>
-      addrIndex: <code>{props.addrIndex ? 'True' : 'False'}</code>
+      addrIndex: <code>{addrIndex ? 'True' : 'False'}</code>
     </Division>
     <Division>
-      slpIndex: <code>{props.slpIndex ? 'True' : 'False'}</code>
+      slpIndex: <code>{slpIndex ? 'True' : 'False'}</code>
     </Division>
   </div>)
 }
@@ -57,8 +67,8 @@ const MemoizedInfoComponent = React.memo(InfoComponent);
 
 
 interface BlockchainInfoProps {
-   client: GrpcManager
-   updateErrorState: Function,
+   client: GrpcManager,
+   updateErrorState: ({}) => void,
    client_error: string | null
 }
 
@@ -95,9 +105,9 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
   componentDidMount(){
     this.props.client.getBlockchainInfo().then((res) => {
         // Convert the blockhash from base64 to hex.
-        let base_tx = res.getBestBlockHash_asB64()
-        let b2u = base64toU8(base_tx).reverse()
-        let tx_hash = u8toHex(b2u)
+        const base_tx = res.getBestBlockHash_asB64()
+        const b2u = base64toU8(base_tx).reverse()
+        const tx_hash = u8toHex(b2u)
 
         // use spread operator on the entire response and later override specific values.
         this.setState({ ...res.toObject(), bestBlockHash: tx_hash})
