@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import React, { lazy, Profiler } from 'react';
 import { connect } from 'react-redux';
 import ErrorBoundary from '../../ErrorBoundary';
 
@@ -82,6 +82,27 @@ class Landing extends React.Component<AppProps, AppState>{
       )
     }
 
+    /**
+     * Create a client.
+     * @param id - the "id" prop of the Profiler tree that has just committed.
+     * @param phase - either "mount" (if the tree just mounted) or "update" (if it re-rendered).
+     * @param actualDuration - time spent rendering the committed update
+     * @param baseDuration - estimated time to render the entire subtree without memoization
+     * @param startTime - when React began rendering this update
+     * @param commitTime - when React committed this update
+     * @param interactions - the Set of interactions belonging to this update
+     */
+    onRenderBlockchainInfoCallback = (id, phase, actualDuration, baseDuration, startTime, commitTime, interactions) => {
+      console.log(`[INFO] PROFILER: ID: ${id}
+        PHASE: ${phase}
+        ACTUAL_DURATION: ${actualDuration}, 
+        BASE_DURATION: ${baseDuration}
+        START_TIME: ${startTime}
+        COMMIT_TIME: ${commitTime}
+        INTERACTIONS: ${interactions.size}`
+      )
+    }
+
     render(){
       return (
         <div className="App">
@@ -92,7 +113,9 @@ class Landing extends React.Component<AppProps, AppState>{
             </h1>
           </header>
           <div>
+            <Profiler id="BlockchainInfo" onRender={this.onRenderBlockchainInfoCallback}>
             {this.renderBlockchainInfo()}
+            </Profiler>
             {this.renderMempoolInfo()}
             {this.renderTransactionsInfo()}
           </div>
