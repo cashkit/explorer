@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { connect } from 'react-redux';
-import { BlockchainInfo, Mempool, Transactions } from '../../containers';
+import ErrorBoundary from '../../ErrorBoundary';
 
 import { createNewClient } from '../../redux';
 import * as bchrpc from '../../protos/BchrpcServiceClientPb';
+
+
+const BlockchainInfo = lazy(() => import("../../containers/blockchaininfo"));
+const Mempool = lazy(() => import("../../containers/mempool"));
+const Transactions = lazy(() => import("../../containers/transactions"));
+
 
 
 interface AppProps {
@@ -45,7 +51,11 @@ class Landing extends React.Component<AppProps, AppState>{
       if (client_error !== null){
           return undefined 
       }
-      return <Mempool/>
+      return (
+        <ErrorBoundary>
+          <Mempool/>
+        </ErrorBoundary>
+      )
     }
 
     renderBlockchainInfo = () => {
@@ -53,7 +63,11 @@ class Landing extends React.Component<AppProps, AppState>{
       if (client_error !== null){
           return undefined 
       }
-      return <BlockchainInfo/>
+      return (
+        <ErrorBoundary>
+          <BlockchainInfo/>
+        </ErrorBoundary>
+      )
     }
 
     renderTransactionsInfo = () => {
@@ -61,7 +75,11 @@ class Landing extends React.Component<AppProps, AppState>{
       if (client_error !== null){
           return undefined 
       }
-      return <Transactions/>
+      return (
+        <ErrorBoundary>
+          <Transactions/>
+        </ErrorBoundary>
+      )
     }
 
     render(){

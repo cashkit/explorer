@@ -4,11 +4,13 @@ import { createBrowserHistory } from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
-import {Error, Landing} from './views';
+import {Landing} from './views';
 
 import { store } from './redux';
-
+import 'normalize.css';
 import './App.css';
+
+const Error = React.lazy(() => import('./views/error'));
 
 var hist = createBrowserHistory();
 

@@ -18,7 +18,7 @@ docker-compose up
 - Run react app:
 ```
 npm install
-npm start
+npm start 
 ```
 
 - Go to the browser at `localhost:3000`
@@ -33,6 +33,8 @@ npm start
 <h3> Features </h3>
 
 - React Frontend
+- Lazy loading: Code splitting
+- Error boundaries: Error boundaries are React components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of the component tree that crashed. Error boundaries catch errors during rendering, in lifecycle methods, and in constructors of the whole tree below them.
 - Typescript
 - Docker
   - Hot reload via shared volumes in development mode.
