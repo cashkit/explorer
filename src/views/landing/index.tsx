@@ -1,15 +1,14 @@
 import React, { lazy, Profiler } from 'react';
 import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet-async';
+
 import ErrorBoundary from '../../ErrorBoundary';
 
 import { createNewClient } from '../../redux';
 import * as bchrpc from '../../protos/BchrpcServiceClientPb';
 
-
 const BlockchainInfo = lazy(() => import("../../containers/blockchaininfo"));
-const Mempool = lazy(() => import("../../containers/mempool"));
 const Transactions = lazy(() => import("../../containers/transactions"));
-
 
 
 interface AppProps {
@@ -19,14 +18,16 @@ interface AppProps {
 }
 
 interface AppState {
-  client_error: string | null
+  client_error: string | null,
+  hide_error: boolean
 }
 
 class Landing extends React.Component<AppProps, AppState>{
     constructor(props){
       super(props);
       this.state = {
-        client_error: this.props.client_error
+        client_error: this.props.client_error,
+        hide_error: false
       }
     }
 
@@ -34,35 +35,33 @@ class Landing extends React.Component<AppProps, AppState>{
       this.props.createNewClient();
     }
 
+    dismissError = () => {
+      this.setState({ hide_error: true })
+    }
+
     renderError = () => {
       const { client_error } = this.props;
-      if (client_error !== null) {
+      const { hide_error } = this.state;
+      if (client_error !== null && !hide_error) {
+
         return (
-          <h5 style={{ backgroundColor: 'rgb(255, 100, 100)', margin: 0}}>
-            Error: {client_error}
-          </h5>
+          // <h5 style={{ backgroundColor: 'rgb(255, 100, 100)', margin: 0}}>
+            // Error: {client_error}
+            <div className="notification is-danger">
+              <button className="delete" onClick={this.dismissError}></button>
+              {client_error}
+            </div>
+          // </h5>
         )
       }
       return undefined
     }
-    
-    renderMempoolInfo = () => {
-      const { client_error } = this.props;
-      if (client_error !== null){
-          return undefined 
-      }
-      return (
-        <ErrorBoundary>
-          <Mempool/>
-        </ErrorBoundary>
-      )
-    }
 
     renderBlockchainInfo = () => {
-      const { client_error } = this.props;
-      if (client_error !== null){
-          return undefined 
-      }
+      // const { client_error } = this.props;
+      // if (client_error !== null){
+      //     return undefined 
+      // }
       return (
         <ErrorBoundary>
           <BlockchainInfo/>
@@ -71,10 +70,10 @@ class Landing extends React.Component<AppProps, AppState>{
     }
 
     renderTransactionsInfo = () => {
-      const { client_error } = this.props;
-      if (client_error !== null){
-          return undefined 
-      }
+      // const { client_error } = this.props;
+      // if (client_error !== null){
+      //     return undefined 
+      // }
       return (
         <ErrorBoundary>
           <Transactions/>
@@ -114,21 +113,38 @@ class Landing extends React.Component<AppProps, AppState>{
     render(){
       return (
         <div className="App">
-          <React.StrictMode>
-            <header className="App-header" style={{display: 'flex', alignItems: 'stretch'}}>
+            <Helmet
+              titleTemplate="%s - CashWeb"
+              defaultTitle="CashWeb"
+            >
+              <meta name="description" content="Dashboard: A CashWeb application" />
+            </Helmet>
+            
+            <header className="App-header">
               {this.renderError()}
-              <h1>
-                Cash Kit
-              </h1>
             </header>
-            <div>
-              <Profiler id="BlockchainInfo" onRender={this.onRenderBlockchainInfoCallback}>
-              {this.renderBlockchainInfo()}
-              </Profiler>
-              {this.renderTransactionsInfo()}
-              {this.renderMempoolInfo()}
+
+            <div className="section">            
+              <div className="columns">
+                <div className="column">
+                  <Profiler id="BlockchainInfo" onRender={this.onRenderBlockchainInfoCallback}>
+                    {this.renderBlockchainInfo()}
+                  </Profiler>
+                </div>
+                <div className="column">
+                    {this.renderTransactionsInfo()}
+                </div>
+              </div>
             </div>
-          </React.StrictMode>
+            
+            <footer className="footer">
+              <div className="content has-text-centered">
+                <p>
+                  <strong>Cashkit</strong> by <a href="https://github.com/kiok46">Kuldeep</a>. The source code is licensed
+                  <a href="http://opensource.org/licenses/mit-license.php"> MIT</a>.
+                </p>
+              </div>
+            </footer>
         </div>
       )
     }

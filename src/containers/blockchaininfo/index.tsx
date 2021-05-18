@@ -5,20 +5,9 @@ import {updateErrorState} from '../../redux';
 import {GetBlockchainInfoResponse} from '../../protos/bchrpc_pb';
 import { base64toU8, u8toHex } from '../../utils';
 
-import styled from 'styled-components'
-
-const Division = styled.div`
-  background: transparent;
-  border-radius: 2px;
-  border: 1px solid palevioletred;
-  color: palevioletred;
-  margin: 0 1em;
-  padding: 0.25em 1em;
-  text-align: left;
-`
 
 function InfoComponent({ bitcoinNet, bestHeight, bestBlockHash,
-  difficulty, medianTime, txIndex, addrIndex, slpIndex }
+  difficulty, medianTime, txIndex, addrIndex, slpIndex, mempoolSize }
   : { bitcoinNet?: GetBlockchainInfoResponse.BitcoinNet,
     bestHeight: number,
     bestBlockHash: Uint8Array | string,
@@ -27,33 +16,67 @@ function InfoComponent({ bitcoinNet, bestHeight, bestBlockHash,
     txIndex: boolean,
     addrIndex: boolean,
     slpIndex: boolean,
+    mempoolSize: number
    }) {
-  return (<div>
-    <Division>
-      bitcoinNet: <code>{bitcoinNet}</code>
-    </Division>
-    <Division>
-      bestHeight: <code>{bestHeight}</code>
-    </Division>
-    <Division>
-      bestBlockHash: <code>{bestBlockHash}</code>
-    </Division>
-    <Division>
-      difficulty: <code>{difficulty}</code>
-    </Division>
-    <Division>
-      medianTime: <code>{medianTime}</code>
-    </Division>
-    <Division>
-      txIndex: <code>{txIndex ? 'True' : 'False'}</code>
-    </Division>
-    <Division>
-      addrIndex: <code>{addrIndex ? 'True' : 'False'}</code>
-    </Division>
-    <Division>
-      slpIndex: <code>{slpIndex ? 'True' : 'False'}</code>
-    </Division>
-  </div>)
+return(
+  <div className="tile is-ancestor">
+      <div className="tile is-vertical">
+        <div className="tile">
+          <div className="tile is-parent is-vertical">
+            <article className="tile is-child notification is-info box has-text-left	">
+              <p className="is-size-4 has-text-weight-medium"> Network</p>
+              <div className="content">{bitcoinNet}</div>
+            </article>
+            <article className="tile is-child notification box has-text-left is-info">
+              <p className="is-size-4 has-text-weight-medium">Best Height</p>
+              <div className="content">{bestHeight}</div>
+            </article>
+          </div>
+          <div className="tile is-parent is-vertical">
+            <article className="tile is-child notification box has-text-left is-info">
+              <p className="is-size-4 has-text-weight-medium">Median Time</p>
+              <p className="content">{medianTime}</p>
+            </article>
+            <article className="tile is-child notification box has-text-left is-warning">
+              <p className="is-size-4 has-text-weight-medium">Difficulty</p>
+              <div className="content">{difficulty}</div>
+            </article>
+          </div>
+        </div>
+        <div className="tile is-parent">
+          <article className="tile is-child notification box has-text-left is-danger">
+            <p className="is-size-4 has-text-weight-medium">Best Blockhash</p>
+            <div className="content">
+              {bestBlockHash}
+            </div>
+          </article>
+        </div>
+
+        <div className="tile">
+          <div className="tile is-parent is-vertical">
+            <article className="tile is-child notification box has-text-left is-success">
+              <p className="is-size-4 has-text-weight-medium">Transaction Index</p>
+              <div className="content">{txIndex ? 'True' : 'False'}</div>
+            </article>
+            <article className="tile is-child notification box has-text-left is-danger">
+              <p className="is-size-4 has-text-weight-medium">SLP Index</p>
+              <div className="content">{slpIndex ? 'True' : 'False'}</div>
+            </article>
+         </div>
+         <div className="tile is-parent is-vertical has-text-left">
+            <article className="tile is-child notification box is-success">
+              <p className="is-size-4 has-text-weight-medium">Address Index</p>
+              <div className="content">{addrIndex ? 'True' : 'False'}</div>
+            </article>
+            <article className="tile is-child notification box has-text-left is-info">
+              <p className="is-size-4 has-text-weight-medium">Mempool Size</p>
+              <div className="content">{mempoolSize}</div>
+            </article>
+         </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 /**
@@ -81,7 +104,8 @@ interface BlockchainInfoState {
   txIndex: boolean,
   addrIndex: boolean,
   slpIndex: boolean,
-
+  // Requires a Separate call
+  mempoolSize: number,
 }
 
 
@@ -98,12 +122,15 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
       medianTime: 0,
       txIndex: false,
       addrIndex: false,
-      slpIndex: false
+      slpIndex: false,
+      // Requires a Separate call
+      mempoolSize: 0,
     }
   }
 
   componentDidMount(){
-    this.props.client.getBlockchainInfo().then((res) => {
+    const { client, updateErrorState } = this.props;
+    client && client.getBlockchainInfo().then((res) => {
         // Convert the blockhash from base64 to hex.
         const base_tx = res.getBestBlockHash_asB64()
         const b2u = base64toU8(base_tx).reverse()
@@ -113,8 +140,17 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
         this.setState({ ...res.toObject(), bestBlockHash: tx_hash})
       }).catch((err) => {
         console.log(err)
-        this.props.updateErrorState({client_error: JSON.stringify(err)})
+        updateErrorState({client_error: JSON.stringify(err)})
       })
+
+    client && client.getMempoolInfo().then((res) => {
+        this.setState({
+          mempoolSize: res.getSize()
+        })
+    }).catch((err) => {
+        console.log(err)
+        updateErrorState({client_error: JSON.stringify(err)})
+    })
   }
 
   // Need to perform the check for `client_error` because once the component is rendered,
@@ -125,10 +161,10 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
   render(){
-    const { client_error } = this.props;
-    if (client_error !== null){
-      return <div></div>
-    }
+    // const { client_error } = this.props;
+    // if (client_error !== null){
+    //   return <div></div>
+    // }
     return (
       <MemoizedInfoComponent {...this.state} />
     );

@@ -25,7 +25,8 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
 
   componentDidMount(){
     const that = this;
-    this.props.client.subscribeTransactions({ includeMempoolAcceptance: true,
+    const { client, updateErrorState} = this.props;
+    client && client.subscribeTransactions({ includeMempoolAcceptance: true,
         includeBlockAcceptance: true,
         // includeSerializedTxn: true,
         }).then((res) => {
@@ -44,15 +45,15 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
         // res.cancel()
     }).catch((err) => {
         console.log(err)
-        this.props.updateErrorState({client_error: JSON.stringify(err)})
+        updateErrorState({client_error: JSON.stringify(err)})
     })
   }
 
-  componentWillUnmount(){
-    this.props.client.subscribeTransactions({ unsubscribe: true })
-                        .then((res) => console.log(res))
-                        .catch((err) => console.log(err))
-  }
+  // componentWillUnmount(){
+  //   this.props.client.subscribeTransactions({ unsubscribe: true })
+  //                       .then((res) => console.log(res))
+  //                       .catch((err) => console.log(err))
+  // }
   
   /**
    * @param id - the "id" prop of the Profiler tree that has just committed.
@@ -94,6 +95,8 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
     // Make sure the key is very unique.
     return (
       <Fragment>
+        <h1 className="title">Live Transactions</h1>
+
         {transactions.map((transaction) => {
           return  <p key={transaction}>
             transaction: <code>{transaction}</code>
@@ -111,10 +114,10 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
   render(){
-    const {client_error} = this.props;
-    if (client_error !== null){
-      return <div></div>
-    }
+    //const {client_error} = this.props;
+    // if (client_error !== null){
+    //   return <div></div>
+    // }
     return (
       <Fragment>
         <Profiler id="Transactions" onRender={this.onRenderTransactionsCallback}>

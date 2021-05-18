@@ -1,19 +1,12 @@
+/**
+ * File not being used.
+ * Using Blockchain Info for displaying Mempool Size.
+ */
+
 import React, { Fragment, Profiler } from 'react';
 import { connect } from 'react-redux';
 import { GrpcManager } from '../../managers';
 import {updateErrorState} from '../../redux';
-
-import styled from 'styled-components'
-
-const Division = styled.div`
-  background: transparent;
-  border-radius: 2px;
-  border: 1px solid palevioletred;
-  color: palevioletred;
-  margin: 0 1em;
-  padding: 0.25em 1em;
-  text-align: left;
-`
 
 interface MempoolProps {
    client: GrpcManager,
@@ -22,7 +15,6 @@ interface MempoolProps {
 }
 
 interface MempoolState {
-  mempoolSize: number,
   mempool: Array<any>
 }
 
@@ -31,28 +23,20 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
   constructor(props: any){
     super(props)
     this.state ={
-      mempoolSize: 0,
       mempool: []
     }
   }
 
   componentDidMount(){
-    this.props.client.getMempoolInfo().then((res) => {
-      this.setState({
-        mempoolSize: res.getSize()
-      })
-    }).catch((err) => {
-      console.log(err)
-      this.props.updateErrorState({client_error: JSON.stringify(err)})
-    })
+    const { client, updateErrorState } = this.props;
 
-    this.props.client.getMempool({ fullTransactions: false }).then((res) => {
+    client && client.getMempool({ fullTransactions: false }).then((res) => {
       this.setState({
         mempool: res.toObject().transactionDataList
       })
     }).catch((err) => {
       console.log(err)
-      this.props.updateErrorState({client_error: JSON.stringify(err)})
+      updateErrorState({client_error: JSON.stringify(err)})
     })
   }
 
@@ -76,37 +60,37 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
     )
   }
   
+  /**
+   * Don't feel like that there is any need to show the entire mempool to the user.
+   * Make sure the key is very unique.
+   */
   renderMempool = () => {
-    // Make sure the key is very unique.
-    return <Division>
+    
+    return <div>
       {this.state.mempool.map((txn, transactionHash) => {
         return <div key={transactionHash}>{JSON.stringify(txn)}</div>
       })}
-    </Division>
+    </div>
   }
 
-  // Need to perform the check for `client_error` because once the component is rendered,
-  // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
-  // and in the parent component we have added a statement to render undefined/some other 
-  // component when the value of `client_error` changes. If you remove the check you might see
-  // a warning like this:
-  // Warning: Can't perform a React state update on an unmounted component.
-  // This is a no-op, but it indicates a memory leak in your application.
+  /**
+   * Need to perform the check for `client_error` because once the component is rendered,
+   * react tries to rerender/perform life cycles when any(the one component listens to) prop updates
+   * and in the parent component we have added a statement to render undefined/some other 
+   * component when the value of `client_error` changes. If you remove the check you might see
+   *  a warning like this:
+   * Warning: Can't perform a React state update on an unmounted component.
+   * This is a no-op, but it indicates a memory leak in your application.
+   */
   render(){
-    const { mempoolSize } = this.state;
-    const {client_error} = this.props;
-    if (client_error !== null){
-      return <div></div>
-    }
+    // const {client_error} = this.props;
+    // if (client_error !== null){
+    //   return <div></div>
+    // }
     return (
-      <div>
-          <p>
-              Mempool Size: <code>{mempoolSize}</code>
-          </p>
-          <Profiler id="Mempool" onRender={this.onRenderMempoolCallback}>
-            {this.renderMempool()}
-          </Profiler>
-      </div>
+      <Profiler id="Mempool" onRender={this.onRenderMempoolCallback}>
+        {this.renderMempool()}
+      </Profiler>
     );
   }
 }
