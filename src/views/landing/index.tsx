@@ -9,6 +9,7 @@ import * as bchrpc from '../../protos/BchrpcServiceClientPb';
 
 const BlockchainInfo = lazy(() => import("../../containers/blockchaininfo"));
 const Transactions = lazy(() => import("../../containers/transactions"));
+const BlockInfo = lazy(() => import("../../containers/blockinfo"));
 
 
 interface AppProps {
@@ -58,10 +59,6 @@ class Landing extends React.Component<AppProps, AppState>{
     }
 
     renderBlockchainInfo = () => {
-      // const { client_error } = this.props;
-      // if (client_error !== null){
-      //     return undefined 
-      // }
       return (
         <ErrorBoundary>
           <BlockchainInfo/>
@@ -70,13 +67,17 @@ class Landing extends React.Component<AppProps, AppState>{
     }
 
     renderTransactionsInfo = () => {
-      // const { client_error } = this.props;
-      // if (client_error !== null){
-      //     return undefined 
-      // }
       return (
         <ErrorBoundary>
           <Transactions/>
+        </ErrorBoundary>
+      )
+    }
+
+    renderBlockInfo = () => {
+      return (
+        <ErrorBoundary>
+          <BlockInfo/>
         </ErrorBoundary>
       )
     }
@@ -135,6 +136,10 @@ class Landing extends React.Component<AppProps, AppState>{
                     {this.renderTransactionsInfo()}
                 </div>
               </div>
+            </div>
+
+            <div className="section">            
+              {this.renderBlockInfo()}
             </div>
             
             <footer className="footer">

@@ -26,23 +26,53 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
   componentDidMount(){
     const that = this;
     const { client, updateErrorState} = this.props;
+    console.log("Mounted.")
     client && client.subscribeTransactions({ includeMempoolAcceptance: true,
         includeBlockAcceptance: true,
         // includeSerializedTxn: true,
         }).then((res) => {
-            res.on('data', function(response){
-              const base_tx = response.getUnconfirmedTransaction()?.getTransaction()?.getHash_asB64()
-              // @ts-ignore
-              const b2u = base64toU8(base_tx).reverse()
-              const tx_hash = u8toHex(b2u)
-              const txs = [tx_hash, ...that.state.transactions]
-              if (txs.length > 30){
-                txs.pop()
-              }
-              that.setState({ transactions: txs})
+          console.log("Already Mounted.")
+          res.on('data', function(response){
+            const base_tx = response.getUnconfirmedTransaction()?.getTransaction()?.getHash_asB64()
+            // @ts-ignore
+            const b2u = base64toU8(base_tx).reverse()
+            const tx_hash = u8toHex(b2u)
+            const txs = [tx_hash, ...that.state.transactions]
+            if (txs.length > 13){
+              txs.pop()
+            }
+            that.setState({ transactions: txs})
+          //     on (eventType: "error",
+          //     callback: (err: Error) => void): ClientReadableStream<RESP>;
+          // on (eventType: "status",
+          //     callback: (status: Status) => void): ClientReadableStream<RESP>;
+          // on (eventType: "metadata",
+          //     callback: (status: Metadata) => void): ClientReadableStream<RESP>;
+          // on (eventType: "data",
+          //     callback: (response: RESP) => void): ClientReadableStream<RESP>;
+          // on (eventType: "end",
         });
+
+        res.on('error', function(response){
+          console.log("On Error: ",  response)
+        });
+
+        res.on('status', function(response){
+          console.log("On status: ",  response)
+        });
+
+        res.on('metadata', function(response){
+          console.log("On metadata: ",  response)
+        });
+
+        res.on('end', function(){
+          console.log("On end: Just ended without response.",)
+        });
+
+
+        // res.removeListener()
         // TODO: Remember to call the cancel actions to stop the stream.
-        // res.cancel()
+        //res.cancel()
     }).catch((err) => {
         console.log(err)
         updateErrorState({client_error: JSON.stringify(err)})

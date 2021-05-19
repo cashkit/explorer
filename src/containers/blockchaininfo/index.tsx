@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { GrpcManager } from '../../managers';
-import {updateErrorState} from '../../redux';
-import {GetBlockchainInfoResponse} from '../../protos/bchrpc_pb';
+import { updateErrorState } from '../../redux';
+import { GetBlockchainInfoResponse } from '../../protos/bchrpc_pb';
 import { base64toU8, u8toHex } from '../../utils';
 
 
@@ -19,63 +19,70 @@ function InfoComponent({ bitcoinNet, bestHeight, bestBlockHash,
     mempoolSize: number
    }) {
 return(
-  <div className="tile is-ancestor">
-      <div className="tile is-vertical">
-        <div className="tile">
-          <div className="tile is-parent is-vertical">
-            <article className="tile is-child notification is-info box has-text-left	">
-              <p className="is-size-4 has-text-weight-medium"> Network</p>
-              <div className="content">{bitcoinNet}</div>
-            </article>
-            <article className="tile is-child notification box has-text-left is-info">
-              <p className="is-size-4 has-text-weight-medium">Best Height</p>
-              <div className="content">{bestHeight}</div>
-            </article>
-          </div>
-          <div className="tile is-parent is-vertical">
-            <article className="tile is-child notification box has-text-left is-info">
-              <p className="is-size-4 has-text-weight-medium">Median Time</p>
-              <p className="content">{medianTime}</p>
-            </article>
-            <article className="tile is-child notification box has-text-left is-warning">
-              <p className="is-size-4 has-text-weight-medium">Difficulty</p>
-              <div className="content">{difficulty}</div>
-            </article>
-          </div>
+  <>
+    <div className="tile is-ancestor">
+        <div className="tile is-parent">
+          <article className="tile is-child box has-text-left">
+            <p className="is-size-4 has-text-weight-medium"> Network</p>
+            <div className="content">{bitcoinNet}</div>
+          </article>
         </div>
         <div className="tile is-parent">
-          <article className="tile is-child notification box has-text-left is-danger">
-            <p className="is-size-4 has-text-weight-medium">Best Blockhash</p>
+          <article className="tile is-child box has-text-left">
+            <p className="is-size-4 has-text-weight-medium">Difficulty</p>
+            <div className="content">{difficulty}</div>
+          </article>
+        </div>
+        <div className="tile is-parent">
+          <article className="tile is-child box has-text-left">
+            <p className="is-size-4 has-text-weight-medium">Best Height</p>
+            <div className="content">{bestHeight}</div>
+          </article>
+        </div>
+        <div className="tile is-parent">
+          <article className="tile is-child box has-text-left">
+            <p className="is-size-4 has-text-weight-medium">Median Time</p>
+            <p className="content">{medianTime}</p>
+          </article>
+        </div>
+    </div>
+    <div className="tile is-ancestor">
+        <div className="tile is-parent">
+          <article className="tile is-child box has-text-left">
+            <p className="is-size-4 has-text-weight-medium">Transaction Index</p>
+            <div className="content">{txIndex ? 'True' : 'False'}</div>
+          </article>
+        </div>
+          <div className="tile is-parent">
+            <article className="tile is-child box has-text-left">
+              <p className="is-size-4 has-text-weight-medium">SLP Index</p>
+              <div className="content">{slpIndex ? 'True' : 'False'}</div>
+            </article>
+          </div>
+          <div className="tile is-parent">
+            <article className="tile is-child box has-text-left">
+              <p className="is-size-4 has-text-weight-medium">Address Index</p>
+              <div className="content">{addrIndex ? 'True' : 'False'}</div>
+            </article>
+          </div>
+          <div className="tile is-parent">
+            <article className="tile is-child box has-text-left">
+              <p className="is-size-4 has-text-weight-medium">Mempool Size</p>
+              <div className="content">{mempoolSize}</div>
+            </article>
+        </div>
+      </div>
+      <div className="tile is-ancestor">
+        <div className="tile is-parent">
+        <article className="tile is-child box has-text-left notification is-primary">
+            <p className="is-size-4 has-text-weight-medium">Best Block Hash</p>
             <div className="content">
               {bestBlockHash}
             </div>
           </article>
         </div>
-
-        <div className="tile">
-          <div className="tile is-parent is-vertical">
-            <article className="tile is-child notification box has-text-left is-success">
-              <p className="is-size-4 has-text-weight-medium">Transaction Index</p>
-              <div className="content">{txIndex ? 'True' : 'False'}</div>
-            </article>
-            <article className="tile is-child notification box has-text-left is-danger">
-              <p className="is-size-4 has-text-weight-medium">SLP Index</p>
-              <div className="content">{slpIndex ? 'True' : 'False'}</div>
-            </article>
-         </div>
-         <div className="tile is-parent is-vertical has-text-left">
-            <article className="tile is-child notification box is-success">
-              <p className="is-size-4 has-text-weight-medium">Address Index</p>
-              <div className="content">{addrIndex ? 'True' : 'False'}</div>
-            </article>
-            <article className="tile is-child notification box has-text-left is-info">
-              <p className="is-size-4 has-text-weight-medium">Mempool Size</p>
-              <div className="content">{mempoolSize}</div>
-            </article>
-         </div>
-        </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -166,7 +173,10 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
     //   return <div></div>
     // }
     return (
+      <>
+      <h1 className="title">Node Information</h1>
       <MemoizedInfoComponent {...this.state} />
+      </>
     );
     
   }
