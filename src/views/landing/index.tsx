@@ -44,15 +44,11 @@ class Landing extends React.Component<AppProps, AppState>{
       const { client_error } = this.props;
       const { hide_error } = this.state;
       if (client_error !== null && !hide_error) {
-
         return (
-          // <h5 style={{ backgroundColor: 'rgb(255, 100, 100)', margin: 0}}>
-            // Error: {client_error}
-            <div className="notification is-danger">
-              <button className="delete" onClick={this.dismissError}></button>
-              {client_error}
-            </div>
-          // </h5>
+          <div className="notification is-danger">
+            <button className="delete" onClick={this.dismissError}></button>
+            {client_error}
+          </div>
         )
       }
       return undefined

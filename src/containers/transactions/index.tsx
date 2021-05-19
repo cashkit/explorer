@@ -38,19 +38,10 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
             const b2u = base64toU8(base_tx).reverse()
             const tx_hash = u8toHex(b2u)
             const txs = [tx_hash, ...that.state.transactions]
-            if (txs.length > 13){
+            if (txs.length > 17){
               txs.pop()
             }
             that.setState({ transactions: txs})
-          //     on (eventType: "error",
-          //     callback: (err: Error) => void): ClientReadableStream<RESP>;
-          // on (eventType: "status",
-          //     callback: (status: Status) => void): ClientReadableStream<RESP>;
-          // on (eventType: "metadata",
-          //     callback: (status: Metadata) => void): ClientReadableStream<RESP>;
-          // on (eventType: "data",
-          //     callback: (response: RESP) => void): ClientReadableStream<RESP>;
-          // on (eventType: "end",
         });
 
         res.on('error', function(response){
@@ -79,12 +70,6 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
     })
   }
 
-  // componentWillUnmount(){
-  //   this.props.client.subscribeTransactions({ unsubscribe: true })
-  //                       .then((res) => console.log(res))
-  //                       .catch((err) => console.log(err))
-  // }
-  
   /**
    * @param id - the "id" prop of the Profiler tree that has just committed.
    * @param phase - either "mount" (if the tree just mounted) or "update" (if it re-rendered).
@@ -144,10 +129,6 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
   render(){
-    //const {client_error} = this.props;
-    // if (client_error !== null){
-    //   return <div></div>
-    // }
     return (
       <Fragment>
         <Profiler id="Transactions" onRender={this.onRenderTransactionsCallback}>

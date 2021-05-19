@@ -161,14 +161,18 @@ interface BlockInfoState {
   nextBlockHash: Uint8Array | string | undefined,
   size: number | undefined,
   medianTime: number | undefined,
-  transactions: number | false | undefined
+  transactions: number | false | undefined,
+  searchHashVal: string | undefined
 }
 
 
 class BlockchainInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
 
+  searchBlockInputRef: React.RefObject<any>;
+
   constructor(props: BlockInfoProps){
     super(props)
+    this.searchBlockInputRef = React.createRef();
     // Setting default values
     this.state ={
       hash: "",
@@ -184,17 +188,21 @@ class BlockchainInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>
       nextBlockHash: "",
       size: 0,
       medianTime: 0,
-      transactions: 0
+      transactions: 0,
+      searchHashVal: ""
     }
   }
 
   componentDidMount(){
+    this.fetchBlockDetails({ hashHex: null })
+  }
+
+  fetchBlockDetails = ({ hashHex }) => {
     const { client, updateErrorState } = this.props;
-    client && client.getBlock({ hashHex: "00000000000000000022e2eda3515cd807e664f657c2f186ebb4db3403c4222c" }).then((res) => {
+    // 000000000000000001de837b02cdd96e4632eb42059fcb041441a8c32ffc342c
+    console.log(hashHex)
+    client && hashHex && client.getBlock({ hashHex }).then((res) => {
         // Convert the blockhash from base64 to hex.
-        // const base_tx = res.getBestBlockHash_asB64()
-        // const b2u = base64toU8(base_tx).reverse()
-        // const tx_hash = u8toHex(b2u)
         const block = res.hasBlock() && res.getBlock()?.toObject()
         const transactions = res.hasBlock() && res.getBlock()?.getTransactionDataList().length
 
@@ -242,16 +250,26 @@ class BlockchainInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>
       })
   }
 
+  onSearchBlock = () => {
+    const ref = this.searchBlockInputRef.current
+    this.fetchBlockDetails({ hashHex: ref.value })
+  }
+
+  onChangeSearchVal = (event) => {
+    const {value}  = event.target
+    this.setState(() => {return { searchHashVal: value }})
+  }
+
   renderSearch = () => {
     return(
       <div className="mb-4">
         <h1 className="title">Block Information</h1>
         <div className="field has-addons is-12">
           <div className="control is-expanded">
-            <input className="input is-rounded is-large" type="text" placeholder="block hash"/>
+            <input value={this.state.searchHashVal} onChange={this.onChangeSearchVal} ref={this.searchBlockInputRef} className="input is-rounded is-large" type="text" placeholder="block hash"/>
           </div>
           <div className="control">
-            <a className="button is-link is-large">
+            <a className="button is-link is-large" onClick={this.onSearchBlock}>
               Search
             </a>
           </div>

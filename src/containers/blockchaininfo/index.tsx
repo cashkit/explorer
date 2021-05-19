@@ -168,10 +168,6 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
   render(){
-    // const { client_error } = this.props;
-    // if (client_error !== null){
-    //   return <div></div>
-    // }
     return (
       <>
       <h1 className="title">Node Information</h1>
