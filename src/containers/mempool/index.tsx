@@ -11,7 +11,7 @@ import {updateErrorState} from '../../redux';
 interface MempoolProps {
    client: GrpcManager,
    updateErrorState: ({}) => void,
-   client_error: string | null
+   clientError: string | null
 }
 
 interface MempoolState {
@@ -36,7 +36,7 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
       })
     }).catch((err) => {
       console.log(err)
-      updateErrorState({client_error: JSON.stringify(err)})
+      updateErrorState({clientError: JSON.stringify(err)})
     })
   }
 
@@ -74,17 +74,17 @@ class Mempool extends React.Component<MempoolProps, MempoolState>{
   }
 
   /**
-   * Need to perform the check for `client_error` because once the component is rendered,
+   * Need to perform the check for `clientError` because once the component is rendered,
    * react tries to rerender/perform life cycles when any(the one component listens to) prop updates
    * and in the parent component we have added a statement to render undefined/some other 
-   * component when the value of `client_error` changes. If you remove the check you might see
+   * component when the value of `clientError` changes. If you remove the check you might see
    *  a warning like this:
    * Warning: Can't perform a React state update on an unmounted component.
    * This is a no-op, but it indicates a memory leak in your application.
    */
   render(){
-    // const {client_error} = this.props;
-    // if (client_error !== null){
+    // const {clientError} = this.props;
+    // if (clientError !== null){
     //   return <div></div>
     // }
     return (
@@ -106,7 +106,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
 	return {
     client: state.AppReducer.client,
-		client_error: state.AppReducer.client_error,
+		clientError: state.AppReducer.clientError,
   };
 };
 

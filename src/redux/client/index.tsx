@@ -18,7 +18,7 @@ const UPDATE_ERROR_STATE = "UPDATE_ERROR_STATE";
 
 const INITIAL_STATE = {
 	client: undefined,
-	client_error: ClientErrors.NOT_INITIATED
+	clientError: ClientErrors.NOT_INITIATED
 };
 
 // Actions
@@ -29,10 +29,10 @@ export const createNewClient = () => {
 	};
 };
 
-export const updateErrorState = ({client_error}) => {
+export const updateErrorState = ({clientError}) => {
 	return {
 		type: UPDATE_ERROR_STATE,
-		payload: client_error
+		payload: clientError
 	};
 };
 
@@ -42,7 +42,7 @@ export const updateErrorState = ({client_error}) => {
 export const AppReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case UPDATE_ERROR_STATE:
-			return { client_error: action.payload }
+			return { clientError: action.payload }
 			// break;
 		case CREATE_GRPC_CLIENT_SUCCESS:
 		case CREATE_GRPC_CLIENT_FAILED:
@@ -64,12 +64,12 @@ export function* workerCreateNewClient() {
 		if (client){
 			yield put({
 				type: CREATE_GRPC_CLIENT_SUCCESS,
-				payload: { client, client_error: null }
+				payload: { client, clientError: null }
 			});
 		} else {
 			yield put({
 				type: CREATE_GRPC_CLIENT_FAILED,
-				payload: { client_error: ClientErrors.UNABLE_TO_CONNECT }
+				payload: { clientError: ClientErrors.UNABLE_TO_CONNECT }
 			});
 		}
 	} catch (e) {

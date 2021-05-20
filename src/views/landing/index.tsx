@@ -10,6 +10,7 @@ import * as bchrpc from '../../protos/BchrpcServiceClientPb';
 const BlockchainInfo = lazy(() => import("../../containers/blockchaininfo"));
 const Transactions = lazy(() => import("../../containers/transactions"));
 const BlockInfo = lazy(() => import("../../containers/blockinfo"));
+const TxInfo = lazy(() => import("../../containers/txn"));
 
 
 interface AppProps {
@@ -78,6 +79,14 @@ class Landing extends React.Component<AppProps, AppState>{
       )
     }
 
+    renderTxInfo = () => {
+      return (
+        <ErrorBoundary>
+          <TxInfo/>
+        </ErrorBoundary>
+      )
+    }
+
     /**
      * @param id - the "id" prop of the Profiler tree that has just committed.
      * @param phase - either "mount" (if the tree just mounted) or "update" (if it re-rendered).
@@ -87,7 +96,7 @@ class Landing extends React.Component<AppProps, AppState>{
      * @param commitTime - when React committed this update
      * @param interactions - the Set of interactions belonging to this update
      */
-    onRenderBlockchainInfoCallback = (id, phase, actualDuration, baseDuration, startTime, commitTime, interactions) => {
+    onRenderProfilerCallback = (id, phase, actualDuration, baseDuration, startTime, commitTime, interactions) => {
       console.log(`[INFO] PROFILER: ID: ${id}
         PHASE: ${phase}
         ACTUAL_DURATION: ${actualDuration}, 
@@ -124,7 +133,7 @@ class Landing extends React.Component<AppProps, AppState>{
             <div className="section">            
               <div className="columns">
                 <div className="column">
-                  <Profiler id="BlockchainInfo" onRender={this.onRenderBlockchainInfoCallback}>
+                  <Profiler id="BlockchainInfo" onRender={this.onRenderProfilerCallback}>
                     {this.renderBlockchainInfo()}
                   </Profiler>
                 </div>
@@ -135,7 +144,17 @@ class Landing extends React.Component<AppProps, AppState>{
             </div>
 
             <div className="section">            
-              {this.renderBlockInfo()}
+                  <Profiler id="BlockInfo" onRender={this.onRenderProfilerCallback}>
+                    {this.renderBlockInfo()}
+                  </Profiler>
+            </div>
+
+            <div className="section">            
+
+                  <Profiler id="Tx Info" onRender={this.onRenderProfilerCallback}>
+                    {/* {this.renderTxInfo()} */}
+                  </Profiler>
+                
             </div>
             
             <footer className="footer">

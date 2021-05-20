@@ -7,6 +7,8 @@ import { all, fork } from 'redux-saga/effects';
 
 
 import { AppReducer, watcherCreateNewClient, createNewClient, updateErrorState } from './client';
+import { BlockReducer, updateBlockHash } from './block';
+import { TxReducer, updateTxHash } from './txn';
 
 // **********
 // Reducers.
@@ -14,6 +16,8 @@ import { AppReducer, watcherCreateNewClient, createNewClient, updateErrorState }
 
 const reducers = combineReducers({
 	AppReducer,
+	BlockReducer,
+	TxReducer
 });
 
 // **********
@@ -42,5 +46,7 @@ sagaMiddleware.run(rootSaga);
 export {
 	store,
 	createNewClient,
-	updateErrorState
+	updateBlockHash,
+	updateErrorState,
+	updateTxHash
 };

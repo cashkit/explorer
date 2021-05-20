@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { GrpcManager } from '../../managers';
-import { updateErrorState } from '../../redux';
+import { updateErrorState, updateBlockHash } from '../../redux';
 import { base64toU8, u8toHex } from '../../utils';
 
 
@@ -90,11 +90,12 @@ return(
   )
 }
 
-function InfoViaHashes({ hash, previousBlock, merkleRoot, nextBlockHash }
+function InfoViaHashes({ hash, previousBlock, merkleRoot, nextBlockHash, onClickHash }
   : {  hash: Uint8Array | string | undefined,
     previousBlock: Uint8Array | string | undefined,
     merkleRoot: Uint8Array | string | undefined,
-    nextBlockHash: Uint8Array | string | undefined
+    nextBlockHash: Uint8Array | string | undefined,
+    onClickHash: (blockHash: Uint8Array | string | undefined) => void,
   }) {
 return(
   <>
@@ -108,7 +109,7 @@ return(
       <div className="tile is-parent">
         <article className="tile is-child box has-text-left  is-info">
           <p className="is-size-4 has-text-weight-medium">Previous Block</p>
-          <div className="content">{previousBlock}</div>
+          <a className="content" onClick={() => onClickHash(previousBlock)}>{previousBlock}</a>
         </article>
       </div>
     </div>
@@ -122,7 +123,7 @@ return(
       <div className="tile is-parent">
         <article className="tile is-child box has-text-left  is-info">
           <p className="is-size-4 has-text-weight-medium">Next Block Hash</p>
-          <div className="content">{nextBlockHash}</div>
+          <a className="content" onClick={() => onClickHash(nextBlockHash)}>{nextBlockHash}</a>
         </article>
       </div>
     </div>
@@ -144,7 +145,9 @@ const MemoizedInfoViaHashesComponent = React.memo(InfoViaHashes);
 interface BlockInfoProps {
    client: GrpcManager,
    updateErrorState: ({}) => void,
-   client_error: string | null
+   updateBlockHash: ({}) => void,
+   blockHash: string | null,
+   clientError: string | null
 }
 
 interface BlockInfoState {
@@ -162,11 +165,11 @@ interface BlockInfoState {
   size: number | undefined,
   medianTime: number | undefined,
   transactions: number | false | undefined,
-  searchHashVal: string | undefined
+  blockHash: string | undefined
 }
 
 
-class BlockchainInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
+class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
 
   searchBlockInputRef: React.RefObject<any>;
 
@@ -189,19 +192,38 @@ class BlockchainInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>
       size: 0,
       medianTime: 0,
       transactions: 0,
-      searchHashVal: ""
+      blockHash: ""
     }
   }
 
   componentDidMount(){
-    this.fetchBlockDetails({ hashHex: null })
+    this.fetchBlockDetails({ blockHash: null })
   }
 
-  fetchBlockDetails = ({ hashHex }) => {
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    // If the new hash is different forom the old one.
+    // return the snapshot to be compared later.
+    if (prevProps.blockHash !== this.props.blockHash) {
+      return this.props.blockHash
+    }
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    // If we have a snapshot value, we've just added new items.
+    // Adjust scroll so these new items don't push the old ones out of view.
+    // (snapshot here is the value returned from getSnapshotBeforeUpdate)
+    if (snapshot !== null) {
+      console.log(snapshot)
+      this.setState({ blockHash: snapshot }, () => {
+        this.fetchBlockDetails({ blockHash: snapshot })
+      })
+    }
+  }
+
+  fetchBlockDetails = ({ blockHash }) => {
     const { client, updateErrorState } = this.props;
-    // 000000000000000001de837b02cdd96e4632eb42059fcb041441a8c32ffc342c
-    console.log(hashHex)
-    client && hashHex && client.getBlock({ hashHex }).then((res) => {
+    client && blockHash && client.getBlock({ hashHex: blockHash }).then((res) => {
         // Convert the blockhash from base64 to hex.
         const block = res.hasBlock() && res.getBlock()?.toObject()
         const transactions = res.hasBlock() && res.getBlock()?.getTransactionDataList().length
@@ -246,18 +268,23 @@ class BlockchainInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>
         }
       }).catch((err) => {
         console.log(err)
-        updateErrorState({client_error: JSON.stringify(err)})
+        updateErrorState({clientError: JSON.stringify(err)})
       })
   }
 
   onSearchBlock = () => {
     const ref = this.searchBlockInputRef.current
-    this.fetchBlockDetails({ hashHex: ref.value })
+    this.fetchBlockDetails({ blockHash: ref.value })
+    this.props.updateBlockHash({ blockHash: ref.value })
   }
 
   onChangeSearchVal = (event) => {
     const {value}  = event.target
-    this.setState(() => {return { searchHashVal: value }})
+    this.setState(() => {return { blockHash: value }})
+  }
+
+  getAndUpdateBlockHash = (blockHash) => {
+    this.fetchBlockDetails({ blockHash: blockHash })
   }
 
   renderSearch = () => {
@@ -266,7 +293,13 @@ class BlockchainInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>
         <h1 className="title">Block Information</h1>
         <div className="field has-addons is-12">
           <div className="control is-expanded">
-            <input value={this.state.searchHashVal} onChange={this.onChangeSearchVal} ref={this.searchBlockInputRef} className="input is-rounded is-large" type="text" placeholder="block hash"/>
+            <input value={this.state.blockHash}
+              onChange={this.onChangeSearchVal}
+              ref={this.searchBlockInputRef}
+              className="input is-rounded is-large"
+              type="text"
+              placeholder="block hash"
+            />
           </div>
           <div className="control">
             <a className="button is-link is-large" onClick={this.onSearchBlock}>
@@ -278,29 +311,24 @@ class BlockchainInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>
     )
   }
 
-  // Need to perform the check for `client_error` because once the component is rendered,
+  // Need to perform the check for `clientError` because once the component is rendered,
   // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
   // and in the parent component we have added a statement to render undefined/some other 
-  // component when the value of `client_error` changes. If you remove the check you might see
+  // component when the value of `clientError` changes. If you remove the check you might see
   // a warning like this:
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
   render(){
-    // const { client_error } = this.props;
-    // if (client_error !== null){
-    //   return <div></div>
-    // }
     return (
       <div className="box">
         {this.renderSearch()}
         <div className="columns">
-          <div className="column ">
+          <div className="column">
             <MemoizedInfoComponent {...this.state} />
           </div>
         </div>
-          <MemoizedInfoViaHashesComponent {...this.state} />
-      </div>
-      
+          <MemoizedInfoViaHashesComponent {...this.state} onClickHash={this.getAndUpdateBlockHash} />
+      </div>      
     );
     
   }
@@ -311,17 +339,21 @@ const mapDispatchToProps = dispatch => {
     updateErrorState: (args) => {
       dispatch(updateErrorState(args));
     },
+    updateBlockHash: (args) => {
+      dispatch(updateBlockHash(args));
+    },
   };
 };
 
 const mapStateToProps = state => {
 	return {
     client: state.AppReducer.client,
-		client_error: state.AppReducer.client_error,
+    blockHash: state.BlockReducer.blockHash,
+		clientError: state.AppReducer.clientError,
   };
 };
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(BlockchainInfo);
+)(BlockInfo);

@@ -7,7 +7,7 @@ import { base64toU8, u8toHex } from '../../utils';
 interface TransactionsProps {
    client: GrpcManager,
    updateErrorState: ({}) => void,
-   client_error: string | null
+   clientError: string | null
 }
 
 interface TransactionsState {
@@ -26,12 +26,10 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
   componentDidMount(){
     const that = this;
     const { client, updateErrorState} = this.props;
-    console.log("Mounted.")
     client && client.subscribeTransactions({ includeMempoolAcceptance: true,
         includeBlockAcceptance: true,
         // includeSerializedTxn: true,
         }).then((res) => {
-          console.log("Already Mounted.")
           res.on('data', function(response){
             const base_tx = response.getUnconfirmedTransaction()?.getTransaction()?.getHash_asB64()
             // @ts-ignore
@@ -59,14 +57,12 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
         res.on('end', function(){
           console.log("On end: Just ended without response.",)
         });
-
-
         // res.removeListener()
         // TODO: Remember to call the cancel actions to stop the stream.
         //res.cancel()
     }).catch((err) => {
         console.log(err)
-        updateErrorState({client_error: JSON.stringify(err)})
+        updateErrorState({clientError: JSON.stringify(err)})
     })
   }
 
@@ -100,7 +96,7 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
               console.log(res)
           }).catch((err) => {
             console.log(err)
-            this.props.updateErrorState({client_error: JSON.stringify(err)})
+            this.props.updateErrorState({clientError: JSON.stringify(err)})
         })
       }
   }
@@ -121,10 +117,10 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
     )
   }
   
-  // Need to perform the check for `client_error` because once the component is rendered,
+  // Need to perform the check for `clientError` because once the component is rendered,
   // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
   // and in the parent component we have added a statement to render undefined/some other 
-  // component when the value of `client_error` changes. If you remove the check you might see
+  // component when the value of `clientError` changes. If you remove the check you might see
   // a warning like this:
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
@@ -150,7 +146,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
 	return {
     client: state.AppReducer.client,
-		client_error: state.AppReducer.client_error,
+		clientError: state.AppReducer.clientError,
   };
 };
 

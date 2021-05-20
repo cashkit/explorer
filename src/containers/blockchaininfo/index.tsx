@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { GrpcManager } from '../../managers';
-import { updateErrorState } from '../../redux';
+import { updateErrorState, updateBlockHash } from '../../redux';
 import { GetBlockchainInfoResponse } from '../../protos/bchrpc_pb';
 import { base64toU8, u8toHex } from '../../utils';
 
@@ -99,7 +99,8 @@ const MemoizedInfoComponent = React.memo(InfoComponent);
 interface BlockchainInfoProps {
    client: GrpcManager,
    updateErrorState: ({}) => void,
-   client_error: string | null
+   updateBlockHash: ({}) => void,
+   clientError: string | null
 }
 
 interface BlockchainInfoState {
@@ -141,13 +142,15 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
         // Convert the blockhash from base64 to hex.
         const base_tx = res.getBestBlockHash_asB64()
         const b2u = base64toU8(base_tx).reverse()
-        const tx_hash = u8toHex(b2u)
+        const block_hash = u8toHex(b2u)
 
         // use spread operator on the entire response and later override specific values.
-        this.setState({ ...res.toObject(), bestBlockHash: tx_hash})
+        // Set block hash on redux store as well.
+        this.props.updateBlockHash({ block_hash })
+        this.setState({ ...res.toObject(), bestBlockHash: block_hash})
       }).catch((err) => {
         console.log(err)
-        updateErrorState({client_error: JSON.stringify(err)})
+        updateErrorState({clientError: JSON.stringify(err)})
       })
 
     client && client.getMempoolInfo().then((res) => {
@@ -156,14 +159,14 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
         })
     }).catch((err) => {
         console.log(err)
-        updateErrorState({client_error: JSON.stringify(err)})
+        updateErrorState({clientError: JSON.stringify(err)})
     })
   }
 
-  // Need to perform the check for `client_error` because once the component is rendered,
+  // Need to perform the check for `clientError` because once the component is rendered,
   // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
   // and in the parent component we have added a statement to render undefined/some other 
-  // component when the value of `client_error` changes. If you remove the check you might see
+  // component when the value of `clientError` changes. If you remove the check you might see
   // a warning like this:
   // Warning: Can't perform a React state update on an unmounted component.
   // This is a no-op, but it indicates a memory leak in your application.
@@ -183,13 +186,16 @@ const mapDispatchToProps = dispatch => {
     updateErrorState: (args) => {
       dispatch(updateErrorState(args));
     },
+    updateBlockHash: (args) => {
+      dispatch(updateBlockHash(args));
+    }
   };
 };
 
 const mapStateToProps = state => {
 	return {
     client: state.AppReducer.client,
-		client_error: state.AppReducer.client_error,
+		clientError: state.AppReducer.clientError,
   };
 };
 
