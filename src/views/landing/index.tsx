@@ -152,7 +152,7 @@ class Landing extends React.Component<AppProps, AppState>{
             <div className="section">            
 
                   <Profiler id="Tx Info" onRender={this.onRenderProfilerCallback}>
-                    {/* {this.renderTxInfo()} */}
+                    {this.renderTxInfo()}
                   </Profiler>
                 
             </div>

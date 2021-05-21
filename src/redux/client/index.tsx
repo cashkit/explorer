@@ -42,13 +42,20 @@ export const updateErrorState = ({clientError}) => {
 export const AppReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case UPDATE_ERROR_STATE:
-			return { clientError: action.payload }
-			// break;
+			// Make sure to pass the state to retain other value in the props of components.
+			// For example if you only set the clientError here then all the other props
+			// will be set to undefined in the next render of the components.
+			return { ...state, clientError: action.payload }
 		case CREATE_GRPC_CLIENT_SUCCESS:
 		case CREATE_GRPC_CLIENT_FAILED:
 			return { ...state, ...action.payload };
 		default:
-			return state;
+			// If there is no specific event that says the error should be updated.
+			// This probably means that either the error has been resolved or never occured.
+			// In case of the error being resolved reset this to null.
+			// For sepcifict cases where we might need to retain the error state we can
+			// update state accordingly.
+			return { ...state, clientError: null};
 	}
 };
 

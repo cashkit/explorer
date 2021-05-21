@@ -9,16 +9,12 @@ import { base64toU8, u8toHex } from '../../utils';
 function InfoComponent({
   blockHeight,
   confirmations,
-  inputsList,
   lockTime,
-  outputsList,
   size,
   timestamp,
   version, }
   :  {
     version: number | undefined,
-    inputsList: Array<Transaction.Input.AsObject> | undefined,
-    outputsList: Array<Transaction.Output.AsObject> | undefined,
     lockTime: number | undefined,
     size: number | undefined,
     timestamp: number | undefined,
@@ -42,12 +38,6 @@ return(
       </div>
       <div className="tile is-parent">
         <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Inputs List</p>
-          <div className="content">{inputsList?.length}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
           <p className="is-size-4 has-text-weight-medium">Timestamp</p>
           <div className="content">{timestamp}</div>
         </article>
@@ -59,13 +49,6 @@ return(
         <article className="tile is-child box has-text-left">
           <p className="is-size-4 has-text-weight-medium">LockTime</p>
           <div className="content">{lockTime}</div>
-        </article>
-      </div>
-
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Outputs List</p>
-          <div className="content">{outputsList?.length}</div>
         </article>
       </div>
       <div className="tile is-parent">
@@ -111,6 +94,54 @@ return(
   )
 }
 
+function InfoInputOutputHashes({ inputsList, outputsList, onClickHash }
+  : { 
+    inputsList: Array<Transaction.Input.AsObject> | undefined,
+    outputsList: Array<Transaction.Output.AsObject> | undefined,
+    onClickHash: (txHash: Uint8Array | string | undefined) => void,
+  }) {
+  let InputsComponent: any = undefined;
+  if (inputsList){
+  InputsComponent = inputsList.map((input) => {
+      const hash64 = input.address
+      // @ts-ignore
+      const b2u = base64toU8(hash64).reverse()
+      const txHash = u8toHex(b2u)
+       const addr = input.address
+       return <div key={txHash} className="content">{addr}</div>
+     })
+  }
+  let OutputsComponent: any = undefined;
+  if (outputsList){
+  OutputsComponent = outputsList.map((output) => {
+       const hash64 = output.address
+       // @ts-ignore
+       const b2u = base64toU8(hash64).reverse()
+       const txHash = u8toHex(b2u)
+       return <div key={txHash} className="content">{txHash}</div>
+     })
+  }
+return(
+  <>
+    <div className="tile is-ancestor">
+      <div className="tile is-parent">
+       <article className="tile is-child box has-text-left">
+         <p className="is-size-4 has-text-weight-medium">Inputs Address List ({inputsList?.length})</p>
+         {InputsComponent}
+       </article>
+     </div>
+      <div className="tile is-parent">
+       <article className="tile is-child box has-text-left">
+         <p className="is-size-4 has-text-weight-medium">Outputs Address List ({outputsList?.length})</p>
+         {OutputsComponent}
+       </article>
+     </div>
+      
+    </div>
+  </>
+  )
+}
+
 /**
  * From React Docs:
  * If your component renders the same result given the same props,
@@ -120,7 +151,7 @@ return(
  */
 const MemoizedInfoComponent = React.memo(InfoComponent);
 const MemoizedInfoViaHashesComponent = React.memo(InfoViaHashes);
-
+const MemoizedInfoInputOutputHashes = React.memo(InfoInputOutputHashes);
 
 interface TxInfoProps {
    client: GrpcManager,
@@ -155,19 +186,7 @@ class TxInfo extends React.PureComponent<TxInfoProps, TxInfoState>{
     super(props)
     this.searchTxInputRef = React.createRef();
     // Setting default values
-    this.state ={
-      hash: "",
-      version: 0,
-      inputsList: [],
-      outputsList: [],
-      lockTime: 0,
-      size: 0,
-      timestamp: 0,
-      confirmations: 0,
-      blockHeight: 0,
-      blockHash: "",
-      txHash: ""
-    }
+    this.state = this.getInitialState()
   }
 
   componentDidMount(){
@@ -188,64 +207,81 @@ class TxInfo extends React.PureComponent<TxInfoProps, TxInfoState>{
     // Adjust scroll so these new items don't push the old ones out of view.
     // (snapshot here is the value returned from getSnapshotBeforeUpdate)
     if (snapshot !== null) {
-      console.log(snapshot)
+      console.log("snapshot", snapshot, this.state.txHash)
       this.setState({ txHash: snapshot }, () => {
         this.fetchTxDetails({ txHash: snapshot })
       })
     }
   }
 
-  fetchTxDetails = ({ txHash }) => {
-    const { client, updateErrorState } = this.props;
-    txHash = "5ff82f966121172aaf433f3626c6c731b3bb71a2a9a755d23dd1c16e61f72b16"
-    client && txHash && client.getTransaction({ hashHex: txHash }).then((res) => {
-        // Convert the blockhash from base64 to hex.
-        const txn = res.hasTransaction() && res.getTransaction()?.toObject()
-        console.log(txn)
-        // const transactions = res.hasBlock() && res.getBlock()?.getTransactionDataList().length
-
-        if (txn){
-          let hash64 = res.getTransaction()?.getHash_asB64()
-          // @ts-ignore
-          let b2u = base64toU8(hash64).reverse()
-          const txHash = u8toHex(b2u)
-
-          hash64 = res.getTransaction()?.getBlockHash_asB64()
-          // @ts-ignore
-          b2u = base64toU8(hash64).reverse()
-          const blockHash = u8toHex(b2u)
-
-          this.setState({
-            blockHash: blockHash,
-            blockHeight: txn.blockHeight,
-            confirmations: txn.confirmations,
-            hash: txHash,
-            inputsList: txn.inputsList,
-            lockTime: txn.lockTime,
-            outputsList: txn.outputsList,
-            size: txn.size,
-            // TODO: Complete the SLP INFO.
-            // slpTransactionInfo: {slpAction: 10, validityJudgement: 0, parseError: "", tokenId: "xA+Bdug1yiMGPZ90oFhJZIJos7nn3rhsbhkPw525lu0=", burnFlagsList: [], …}
-            timestamp: txn.timestamp,
-            version: txn.version,
-          })
-        }
-
-
-      }).catch((err) => {
-        console.log(err)
-        updateErrorState({clientError: JSON.stringify(err)})
-      })
+  getInitialState = () => {
+    return {
+      hash: "",
+      version: 0,
+      inputsList: [],
+      outputsList: [],
+      lockTime: 0,
+      size: 0,
+      timestamp: 0,
+      confirmations: 0,
+      blockHeight: 0,
+      blockHash: "",
+      txHash: ""
+    }
   }
 
-  onSearchBlock = () => {
+  fetchTxDetails = ({ txHash }) => {
+    const { client, updateErrorState } = this.props;
+    if (client && txHash){
+      client.getTransaction({ hashHex: txHash }).then((res) => {
+          // Convert the blockhash from base64 to hex.
+          const txn = res.hasTransaction() && res.getTransaction()?.toObject()
+
+          if (txn){
+            let hash64 = res.getTransaction()?.getHash_asB64()
+            // @ts-ignore
+            let b2u = base64toU8(hash64).reverse()
+            const txHash = u8toHex(b2u)
+
+            hash64 = res.getTransaction()?.getBlockHash_asB64()
+            // @ts-ignore
+            b2u = base64toU8(hash64).reverse()
+            const blockHash = u8toHex(b2u)
+
+            this.setState({
+              blockHash: blockHash,
+              blockHeight: txn.blockHeight,
+              confirmations: txn.confirmations,
+              hash: txHash,
+              inputsList: txn.inputsList,
+              lockTime: txn.lockTime,
+              outputsList: txn.outputsList,
+              size: txn.size,
+              // TODO: Complete the SLP INFO.
+              // slpTransactionInfo: {slpAction: 10, validityJudgement: 0, parseError: "", tokenId: "xA+Bdug1yiMGPZ90oFhJZIJos7nn3rhsbhkPw525lu0=", burnFlagsList: [], …}
+              timestamp: txn.timestamp,
+              version: txn.version,
+            })
+          }
+        }).catch((err) => {
+          console.log(err)
+          this.setState({ ...this.getInitialState() })
+          updateErrorState({clientError: JSON.stringify(err)})
+      })
+    }
+  }
+
+  onSearchTxn = () => {
     const ref = this.searchTxInputRef.current
+    console.log(ref.value)
+
     this.fetchTxDetails({ txHash: ref.value })
     this.props.updateTxHash({ txHash: ref.value })
   }
 
   onChangeSearchVal = (event) => {
     const {value}  = event.target
+    console.log(value)
     this.setState(() => {return { txHash: value }})
   }
 
@@ -268,7 +304,7 @@ class TxInfo extends React.PureComponent<TxInfoProps, TxInfoState>{
             />
           </div>
           <div className="control">
-            <a className="button is-link is-large" onClick={this.onSearchBlock}>
+            <a className="button is-link is-large" onClick={this.onSearchTxn}>
               Search
             </a>
           </div>
@@ -298,6 +334,7 @@ class TxInfo extends React.PureComponent<TxInfoProps, TxInfoState>{
           </div>
         </div>
           <MemoizedInfoViaHashesComponent {...this.state} onClickHash={this.getAndUpdateTxHash} />
+          <MemoizedInfoInputOutputHashes {...this.state} onClickHash={this.getAndUpdateTxHash}/>
       </div>
       
     );
