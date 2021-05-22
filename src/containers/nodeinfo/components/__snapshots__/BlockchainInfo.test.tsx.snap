@@ -1,0 +1,180 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<BlockchainInfo/> renders correctly 1`] = `
+Array [
+  <div
+    className="tile is-ancestor"
+  >
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+           Network
+        </p>
+        <div
+          className="content"
+        >
+          0
+        </div>
+      </article>
+    </div>
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+          Difficulty
+        </p>
+        <div
+          className="content"
+        >
+          0
+        </div>
+      </article>
+    </div>
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+          Best Height
+        </p>
+        <div
+          className="content"
+        >
+          0
+        </div>
+      </article>
+    </div>
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+          Median Time
+        </p>
+        <p
+          className="content"
+        >
+          0
+        </p>
+      </article>
+    </div>
+  </div>,
+  <div
+    className="tile is-ancestor"
+  >
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+          Transaction Index
+        </p>
+        <div
+          className="content"
+        >
+          False
+        </div>
+      </article>
+    </div>
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+          SLP Index
+        </p>
+        <div
+          className="content"
+        >
+          False
+        </div>
+      </article>
+    </div>
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+          Address Index
+        </p>
+        <div
+          className="content"
+        >
+          False
+        </div>
+      </article>
+    </div>
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+          Mempool Size
+        </p>
+        <div
+          className="content"
+        >
+          0
+        </div>
+      </article>
+    </div>
+  </div>,
+  <div
+    className="tile is-ancestor"
+  >
+    <div
+      className="tile is-parent"
+    >
+      <article
+        className="tile is-child box has-text-left notification is-primary"
+      >
+        <p
+          className="is-size-4 has-text-weight-medium"
+        >
+          Best Block Hash
+        </p>
+        <div
+          className="content"
+        >
+          
+        </div>
+      </article>
+    </div>
+  </div>,
+]
+`;

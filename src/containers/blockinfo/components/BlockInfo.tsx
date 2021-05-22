@@ -1,6 +1,6 @@
 import React from 'react';
 
-export interface InfoComponentProps {
+export interface BlockInfoProps {
     height: number,
     version: number,
     timestamp: number,
@@ -13,9 +13,9 @@ export interface InfoComponentProps {
     transactions: number | false
 }
 
-export const InfoComponent = ({ height, version, timestamp, bits, nonce,
+export const BlockInfo = ({ height, version, timestamp, bits, nonce,
     confirmations, difficulty, size, medianTime, transactions }
-    :  InfoComponentProps) => {
+    :  BlockInfoProps) => {
   return(
     <>
       <div className="tile is-ancestor">

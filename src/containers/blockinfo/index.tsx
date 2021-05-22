@@ -4,7 +4,7 @@ import { GrpcManager } from '../../managers';
 import { updateErrorState, updateBlockHash } from '../../redux';
 import { base64toU8, u8toHex } from '../../utils';
 
-import { InfoComponent, InfoViaHashes } from './components';
+import { BlockInfo, BlockInfoViaHashes } from './components';
 
 /**
  * From React Docs:
@@ -13,8 +13,8 @@ import { InfoComponent, InfoViaHashes } from './components';
  * in some cases by memoizing the result. This means that React will
  * skip rendering the component, and reuse the last rendered result.
  */
- const MemoizedInfoComponent = React.memo(InfoComponent);
- const MemoizedInfoViaHashesComponent = React.memo(InfoViaHashes);
+ const MemoizedInfoComponent = React.memo(BlockInfo);
+ const MemoizedInfoViaHashesComponent = React.memo(BlockInfoViaHashes);
 
 interface BlockInfoProps {
    client: GrpcManager,
@@ -43,7 +43,7 @@ interface BlockInfoState {
 }
 
 
-class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
+class Block extends React.PureComponent<BlockInfoProps, BlockInfoState>{
 
   searchBlockInputRef: React.RefObject<any>;
   initialValues: BlockInfoState;
@@ -241,4 +241,4 @@ const mapStateToProps = state => {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(BlockInfo);
+)(Block);

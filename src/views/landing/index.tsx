@@ -7,7 +7,7 @@ import ErrorBoundary from '../../ErrorBoundary';
 import { createNewClient } from '../../redux';
 import * as bchrpc from '../../protos/BchrpcServiceClientPb';
 
-const BlockchainInfo = lazy(() => import("../../containers/blockchaininfo"));
+const NodeInfo = lazy(() => import("../../containers/nodeinfo"));
 const Transactions = lazy(() => import("../../containers/transactions"));
 const BlockInfo = lazy(() => import("../../containers/blockinfo"));
 const TxInfo = lazy(() => import("../../containers/txn"));
@@ -60,7 +60,7 @@ class Landing extends React.Component<AppProps, AppState>{
     renderBlockchainInfo = () => {
       return (
         <ErrorBoundary>
-          <BlockchainInfo/>
+          <NodeInfo/>
         </ErrorBoundary>
       )
     }

@@ -1,7 +1,7 @@
-import { InfoComponent } from './InfoComponent';
-import { InfoViaHashes } from './InfoViaHashes';
+import { BlockInfo } from './BlockInfo';
+import { BlockInfoViaHashes } from './BlockInfoViaHashes';
 
 export {
-    InfoComponent,
-    InfoViaHashes
+    BlockInfo,
+    BlockInfoViaHashes
 }

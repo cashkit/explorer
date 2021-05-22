@@ -1,6 +1,6 @@
 import React from 'react';
 
-export interface InfoViaHashesProps {
+export interface BlockInfoViaHashesProps {
     hash: Uint8Array | string,
     previousBlock: Uint8Array | string,
     merkleRoot: Uint8Array | string,
@@ -8,8 +8,8 @@ export interface InfoViaHashesProps {
     onClickHash: (blockHash: Uint8Array | string) => void,
 }
 
-export const InfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockHash, onClickHash }
-    : InfoViaHashesProps) => {
+export const BlockInfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockHash, onClickHash }
+    : BlockInfoViaHashesProps) => {
   return(
     <>
       <div className="tile is-ancestor">

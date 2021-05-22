@@ -1,4 +1,4 @@
-import BlockchainInfo from './blockchaininfo';
+import BlockchainInfo from './nodeinfo';
 import BlockInfo from './blockinfo';
 import Transactions from './transactions';
 
