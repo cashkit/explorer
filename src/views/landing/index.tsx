@@ -15,20 +15,25 @@ const TxInfo = lazy(() => import("../../containers/txn"));
 
 interface AppProps {
   client: bchrpc.bchrpcClient,
-  client_error: string | null,
+  clientError: string | null,
   createNewClient: Function
 }
 
 interface AppState {
-  client_error: string | null,
+  clientError: string | null,
   hide_error: boolean
 }
 
 class Landing extends React.Component<AppProps, AppState>{
+    txInfoRef: React.RefObject<any>;
+    blockInfoRef: React.RefObject<any>;
+
     constructor(props){
       super(props);
+      this.txInfoRef = React.createRef();
+      this.blockInfoRef = React.createRef();
       this.state = {
-        client_error: this.props.client_error,
+        clientError: this.props.clientError,
         hide_error: false
       }
     }
@@ -37,22 +42,20 @@ class Landing extends React.Component<AppProps, AppState>{
       this.props.createNewClient();
     }
 
-    dismissError = () => {
-      this.setState({ hide_error: true })
-    }
-
     renderError = () => {
-      const { client_error } = this.props;
-      const { hide_error } = this.state;
-      if (client_error !== null && !hide_error) {
+      const { clientError } = this.props;
         return (
-          <div className="notification is-danger">
-            <button className="delete" onClick={this.dismissError}></button>
-            {client_error}
+          <div className="notification is-danger" style={{
+            backgroundColor: "#85f1a5",
+            position: "sticky",
+            zIndex: 1,
+            left: "50%",
+            top: "0%",
+            boxShadow: "2px 2px 5px -2px rgba(0,0,0,0.28)"
+          }}>
+            {clientError}
           </div>
         )
-      }
-      return undefined
     }
 
     renderBlockchainInfo = () => {
@@ -66,7 +69,7 @@ class Landing extends React.Component<AppProps, AppState>{
     renderTransactionsInfo = () => {
       return (
         <ErrorBoundary>
-          <Transactions/>
+          <Transactions scrollToTransactionDetails={() => this.executeScroll(this.txInfoRef)}/>
         </ErrorBoundary>
       )
     }
@@ -107,15 +110,10 @@ class Landing extends React.Component<AppProps, AppState>{
       )
     }
 
+    executeScroll = (ref) => {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
 
-    /**
-     * According to the Docs, React Strict mode currently helps with:
-     * - Identifying components with unsafe lifecycles
-     * - Warning about legacy string ref API usage
-     * - Warning about deprecated findDOMNode usage
-     * - Detecting unexpected side effects
-     * - Detecting legacy context API
-     */
     render(){
       return (
         <div className="App">
@@ -126,9 +124,9 @@ class Landing extends React.Component<AppProps, AppState>{
               <meta name="description" content="Dashboard: A CashWeb application" />
             </Helmet>
             
-            <header className="App-header">
+            {/* <header className="App-header"> */}
               {this.renderError()}
-            </header>
+            {/* </header> */}
 
             <div className="section">            
               <div className="columns">
@@ -143,18 +141,16 @@ class Landing extends React.Component<AppProps, AppState>{
               </div>
             </div>
 
-            <div className="section">            
-                  <Profiler id="BlockInfo" onRender={this.onRenderProfilerCallback}>
-                    {this.renderBlockInfo()}
-                  </Profiler>
+            <div className="section" ref={this.blockInfoRef}>            
+              <Profiler id="BlockInfo" onRender={this.onRenderProfilerCallback}>
+                {this.renderBlockInfo()}
+              </Profiler>
             </div>
 
-            <div className="section">            
-
-                  <Profiler id="Tx Info" onRender={this.onRenderProfilerCallback}>
-                    {this.renderTxInfo()}
-                  </Profiler>
-                
+            <div className="section" ref={this.txInfoRef}>            
+              <Profiler id="Tx Info" onRender={this.onRenderProfilerCallback}>
+                {this.renderTxInfo()}
+              </Profiler>
             </div>
             
             <footer className="footer">
@@ -182,7 +178,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
 	return {
     client: state.AppReducer.client,
-		client_error: state.AppReducer.client_error,
+		clientError: state.AppReducer.clientError,
   };
 };
 

@@ -55,6 +55,7 @@ export const AppReducer = (state = INITIAL_STATE, action) => {
 			// In case of the error being resolved reset this to null.
 			// For sepcifict cases where we might need to retain the error state we can
 			// update state accordingly.
+			// return state
 			return { ...state, clientError: null};
 	}
 };

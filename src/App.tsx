@@ -8,13 +8,22 @@ import {Landing} from './views';
 
 import { store } from './redux';
 import 'normalize.css';
-import './App.css';
+// import './App.css';
 
 import "../node_modules/bulma/bulma.sass";
 import './App.sass'
 
 const Error = React.lazy(() => import('./views/error'));
 
+/**
+ * 
+ * React.StrictMode: According to the Docs, React Strict mode currently helps with:
+ * - Identifying components with unsafe lifecycles
+ * - Warning about legacy string ref API usage
+ * - Warning about deprecated findDOMNode usage
+ * - Detecting unexpected side effects
+ * - Detecting legacy context API
+ */
 
 class CashWeb extends React.Component{
   render(){

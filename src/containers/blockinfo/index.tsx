@@ -214,7 +214,6 @@ class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
     // Adjust scroll so these new items don't push the old ones out of view.
     // (snapshot here is the value returned from getSnapshotBeforeUpdate)
     if (snapshot !== null) {
-      console.log(snapshot)
       this.setState({ blockHash: snapshot }, () => {
         this.fetchBlockDetails({ blockHash: snapshot })
       })
@@ -267,7 +266,7 @@ class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
           })
         }
       }).catch((err) => {
-        console.log(err)
+        console.log("[ERR] fetchBlockDetails: ", err)
         updateErrorState({clientError: JSON.stringify(err)})
       })
   }

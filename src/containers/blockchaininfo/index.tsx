@@ -74,7 +74,7 @@ return(
       </div>
       <div className="tile is-ancestor">
         <div className="tile is-parent">
-        <article className="tile is-child box has-text-left notification is-primary">
+         <article className="tile is-child box has-text-left notification is-primary">
             <p className="is-size-4 has-text-weight-medium">Best Block Hash</p>
             <div className="content">
               {bestBlockHash}
@@ -149,7 +149,7 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
         this.props.updateBlockHash({ block_hash })
         this.setState({ ...res.toObject(), bestBlockHash: block_hash})
       }).catch((err) => {
-        console.log(err)
+        console.log("[ERR] getBlockchainInfo: ", err)
         updateErrorState({clientError: JSON.stringify(err)})
       })
 
@@ -158,7 +158,7 @@ class BlockchainInfo extends React.PureComponent<BlockchainInfoProps, Blockchain
           mempoolSize: res.getSize()
         })
     }).catch((err) => {
-        console.log(err)
+        console.log("[ERR] getMempoolInfo: ", err)
         updateErrorState({clientError: JSON.stringify(err)})
     })
   }

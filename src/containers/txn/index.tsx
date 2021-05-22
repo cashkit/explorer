@@ -157,8 +157,8 @@ interface TxInfoProps {
    client: GrpcManager,
    updateErrorState: ({}) => void,
    updateTxHash: ({}) => void,
-   txHash: string | null,
-   clientError: string | null
+   txHash: string | undefined,
+   clientError: string | undefined
 }
 
 interface TxInfoState {
@@ -264,7 +264,7 @@ class TxInfo extends React.PureComponent<TxInfoProps, TxInfoState>{
             })
           }
         }).catch((err) => {
-          console.log(err)
+          console.log("[ERR] fetchTxDetails: ", err)
           this.setState({ ...this.getInitialState() })
           updateErrorState({clientError: JSON.stringify(err)})
       })
@@ -273,15 +273,12 @@ class TxInfo extends React.PureComponent<TxInfoProps, TxInfoState>{
 
   onSearchTxn = () => {
     const ref = this.searchTxInputRef.current
-    console.log(ref.value)
-
     this.fetchTxDetails({ txHash: ref.value })
     this.props.updateTxHash({ txHash: ref.value })
   }
 
   onChangeSearchVal = (event) => {
     const {value}  = event.target
-    console.log(value)
     this.setState(() => {return { txHash: value }})
   }
 
@@ -356,7 +353,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
 	return {
     client: state.AppReducer.client,
-    txHash: state.BlockReducer.txHash,
+    txHash: state.TxReducer.txHash,
 		clientError: state.AppReducer.clientError,
   };
 };

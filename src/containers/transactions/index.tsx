@@ -1,13 +1,15 @@
 import React, { Fragment, Profiler } from 'react';
 import { connect } from 'react-redux';
 import { GrpcManager } from '../../managers';
-import {updateErrorState} from '../../redux';
+import {updateErrorState, updateTxHash} from '../../redux';
 import { base64toU8, u8toHex } from '../../utils';
 
 interface TransactionsProps {
    client: GrpcManager,
    updateErrorState: ({}) => void,
-   clientError: string | null
+   updateTxHash: ({}) => void,
+   clientError: string | null,
+   scrollToTransactionDetails: () => void,
 }
 
 interface TransactionsState {
@@ -89,16 +91,10 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
   /**
    * Fetch a unique transaction.
    */
-  onClickTransactionFetch = () => {
-    if (this.state.transactions.length > 1){
-        this.props.client.getTransaction({ hash: this.state.transactions[0]
-          }).then((res) => {
-              console.log(res)
-          }).catch((err) => {
-            console.log(err)
-            this.props.updateErrorState({clientError: JSON.stringify(err)})
-        })
-      }
+  onClickTransaction = (hashHex) => {
+    console.log(hashHex)
+    this.props.updateTxHash({txHash: hashHex})
+    this.props.scrollToTransactionDetails()
   }
 
   renderTransactions = () => {
@@ -109,8 +105,8 @@ class Transactions extends React.Component<TransactionsProps, TransactionsState>
         <h1 className="title">Live Transactions</h1>
 
         {transactions.map((transaction) => {
-          return  <p key={transaction}>
-            transaction: <code>{transaction}</code>
+          return  <p key={transaction} onClick={() => this.onClickTransaction(transaction)}>
+            transaction: <a className="content">{transaction}</a>
           </p>
         })}
       </Fragment>
@@ -139,6 +135,9 @@ const mapDispatchToProps = dispatch => {
 	return {
     updateErrorState: (args) => {
       dispatch(updateErrorState(args));
+    },
+    updateTxHash: (args) => {
+      dispatch(updateTxHash(args));
     },
   };
 };
