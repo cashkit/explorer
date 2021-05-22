@@ -46,13 +46,13 @@ interface BlockInfoState {
 class Block extends React.PureComponent<BlockInfoProps, BlockInfoState>{
 
   searchBlockInputRef: React.RefObject<any>;
-  initialValues: BlockInfoState;
+  initialState: BlockInfoState;
 
   constructor(props: BlockInfoProps){
     super(props)
     this.searchBlockInputRef = React.createRef();
     // Setting default values
-    this.initialValues = {
+    this.initialState = {
       hash: "",
       height: 0,
       version: 0,
@@ -69,7 +69,7 @@ class Block extends React.PureComponent<BlockInfoProps, BlockInfoState>{
       transactions: 0,
       blockHash: ""
     };
-    this.state = { ...this.initialValues }
+    this.state = { ...this.initialState }
   }
 
   getSnapshotBeforeUpdate(prevProps, prevState) {
@@ -126,24 +126,25 @@ class Block extends React.PureComponent<BlockInfoProps, BlockInfoState>{
           const nextBlockHash = u8toHex(b2u)
 
           this.setState({
-            height: block.info?.height || this.initialValues.height,
-            hash: blockHash || this.initialValues.hash,
-            version: block.info?.version || this.initialValues.version,
-            previousBlock: previousBlock || this.initialValues.previousBlock,
-            merkleRoot: merkleRoot || this.initialValues.merkleRoot,
-            timestamp: block.info?.timestamp || this.initialValues.timestamp,
-            bits: block.info?.bits || this.initialValues.bits,
-            nonce: block.info?.nonce || this.initialValues.nonce,
-            confirmations: block.info?.confirmations || this.initialValues.confirmations,
-            difficulty: block.info?.difficulty || this.initialValues.difficulty,
-            nextBlockHash: nextBlockHash || this.initialValues.nextBlockHash,
-            size: block.info?.size || this.initialValues.size,
-            medianTime: block.info?.medianTime || this.initialValues.medianTime,
-            transactions: transactions || this.initialValues.transactions
+            height: block.info?.height || this.initialState.height,
+            hash: blockHash || this.initialState.hash,
+            version: block.info?.version || this.initialState.version,
+            previousBlock: previousBlock || this.initialState.previousBlock,
+            merkleRoot: merkleRoot || this.initialState.merkleRoot,
+            timestamp: block.info?.timestamp || this.initialState.timestamp,
+            bits: block.info?.bits || this.initialState.bits,
+            nonce: block.info?.nonce || this.initialState.nonce,
+            confirmations: block.info?.confirmations || this.initialState.confirmations,
+            difficulty: block.info?.difficulty || this.initialState.difficulty,
+            nextBlockHash: nextBlockHash || this.initialState.nextBlockHash,
+            size: block.info?.size || this.initialState.size,
+            medianTime: block.info?.medianTime || this.initialState.medianTime,
+            transactions: transactions || this.initialState.transactions
           })
         }
       }).catch((err) => {
         console.log("[ERR] fetchBlockDetails: ", err)
+        this.setState({ ...this.initialState })
         updateErrorState({clientError: JSON.stringify(err)})
       })
   }

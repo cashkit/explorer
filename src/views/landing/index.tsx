@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 
 import ErrorBoundary from '../../ErrorBoundary';
-
 import { createNewClient } from '../../redux';
+import { InfoBar } from '../../common';
+
 import * as bchrpc from '../../protos/BchrpcServiceClientPb';
 
 const NodeInfo = lazy(() => import("../../containers/nodeinfo"));
@@ -40,21 +41,11 @@ class Landing extends React.Component<AppProps, AppState>{
       this.props.createNewClient();
     }
 
-    renderError = () => {
+    renderInfoBar = () => {
       const { clientError } = this.props;
-        return (
-          <div className="notification" style={{
-            backgroundColor: "#85f1a5",
-            color: 'white',
-            position: "sticky",
-            zIndex: 1,
-            left: "50%",
-            top: "0%",
-            boxShadow: "2px 2px 5px -2px rgba(0,0,0,0.28)"
-          }}>
-            {clientError}
-          </div>
-        )
+      return (
+        <InfoBar content={clientError}></InfoBar>
+      )
     }
 
     renderBlockchainInfo = () => {
@@ -122,7 +113,7 @@ class Landing extends React.Component<AppProps, AppState>{
             >
               <meta name="description" content="Dashboard: A CashWeb application" />
             </Helmet>
-            {this.renderError()}
+            {this.renderInfoBar()}
 
             <div className="section">            
               <div className="columns">

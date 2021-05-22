@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 
-import {Landing} from './views';
+import { Landing } from './views';
 
 import { store } from './redux';
 import 'normalize.css';
@@ -13,7 +13,7 @@ import 'normalize.css';
 import "../node_modules/bulma/bulma.sass";
 import './App.sass'
 
-const Error = React.lazy(() => import('./views/error'));
+const Error404 = React.lazy(() => import('./views/error404'));
 
 /**
  * 
@@ -41,7 +41,7 @@ class CashWeb extends React.Component{
                 </Helmet>
                 <Switch>
                   <Route exact path={'/'} component={Landing} />;
-                  <Route component={Error} />;
+                  <Route component={Error404} />;
                 </Switch>
               </BrowserRouter>
             </Suspense>

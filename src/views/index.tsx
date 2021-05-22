@@ -1,7 +1,7 @@
-import Error from './error';
+import Error404 from './error404';
 import Landing from './landing';
 
 export {
-    Error,
+    Error404,
     Landing
 }

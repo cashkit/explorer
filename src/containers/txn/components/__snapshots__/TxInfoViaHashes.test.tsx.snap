@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TxInfoViaHashes/> renders correctly 1`] = `
+<div
+  className="tile is-ancestor"
+>
+  <div
+    className="tile is-parent"
+  >
+    <article
+      className="tile is-child box has-text-left notification is-primary"
+    >
+      <p
+        className="is-size-4 has-text-weight-medium"
+      >
+        Tx Hash
+      </p>
+      <div
+        className="content"
+      >
+        
+      </div>
+    </article>
+  </div>
+  <div
+    className="tile is-parent"
+  >
+    <article
+      className="tile is-child box has-text-left  is-info"
+    >
+      <p
+        className="is-size-4 has-text-weight-medium"
+      >
+        Block Hash
+      </p>
+      <a
+        className="content"
+        onClick={[Function]}
+      >
+        
+      </a>
+    </article>
+  </div>
+</div>
+`;
