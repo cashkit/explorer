@@ -4,132 +4,7 @@ import { GrpcManager } from '../../managers';
 import { updateErrorState, updateBlockHash } from '../../redux';
 import { base64toU8, u8toHex } from '../../utils';
 
-
-function InfoComponent({ height, version, timestamp, bits, nonce,
-  confirmations, difficulty, size, medianTime, transactions }
-  :  { height: number | undefined | undefined,
-  version: number | undefined,
-  timestamp: number | undefined,
-  bits: number | undefined,
-  nonce: number | undefined,
-  confirmations: number | undefined,
-  difficulty: number | undefined,
-  size: number | undefined,
-  medianTime: number | undefined,
-  transactions: number | false | undefined
- }) {
-return(
-  <>
-    <div className="tile is-ancestor">
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Height</p>
-          <div className="content">{height}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Version</p>
-          <div className="content">{version}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Difficulty</p>
-          <div className="content">{difficulty}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Timestamp</p>
-          <div className="content">{timestamp}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Bits</p>
-          <div className="content">{bits}</div>
-        </article>
-      </div>
-    </div>
-
-    <div className="tile is-ancestor">
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Nonce</p>
-          <div className="content">{nonce}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Confirmations</p>
-          <div className="content">{confirmations}</div>
-        </article>
-      </div>
-
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Size</p>
-          <div className="content">{size}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Median Time</p>
-          <div className="content">{medianTime}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left">
-          <p className="is-size-4 has-text-weight-medium">Total Transactions</p>
-          <div className="content">{transactions}</div>
-        </article>
-      </div>
-    </div>
-    </>
-  )
-}
-
-function InfoViaHashes({ hash, previousBlock, merkleRoot, nextBlockHash, onClickHash }
-  : {  hash: Uint8Array | string | undefined,
-    previousBlock: Uint8Array | string | undefined,
-    merkleRoot: Uint8Array | string | undefined,
-    nextBlockHash: Uint8Array | string | undefined,
-    onClickHash: (blockHash: Uint8Array | string | undefined) => void,
-  }) {
-return(
-  <>
-    <div className="tile is-ancestor">
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left notification is-primary">
-          <p className="is-size-4 has-text-weight-medium">Block Hash</p>
-          <div className="content">{hash}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left  is-info">
-          <p className="is-size-4 has-text-weight-medium">Previous Block</p>
-          <a className="content" onClick={() => onClickHash(previousBlock)}>{previousBlock}</a>
-        </article>
-      </div>
-    </div>
-    <div className="tile is-ancestor">
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left  is-info">
-          <p className="is-size-4 has-text-weight-medium">Merkle Root</p>
-          <div className="content">{merkleRoot}</div>
-        </article>
-      </div>
-      <div className="tile is-parent">
-        <article className="tile is-child box has-text-left  is-info">
-          <p className="is-size-4 has-text-weight-medium">Next Block Hash</p>
-          <a className="content" onClick={() => onClickHash(nextBlockHash)}>{nextBlockHash}</a>
-        </article>
-      </div>
-    </div>
-  </>
-  )
-}
+import { InfoComponent, InfoViaHashes } from './components';
 
 /**
  * From React Docs:
@@ -138,9 +13,8 @@ return(
  * in some cases by memoizing the result. This means that React will
  * skip rendering the component, and reuse the last rendered result.
  */
-const MemoizedInfoComponent = React.memo(InfoComponent);
-const MemoizedInfoViaHashesComponent = React.memo(InfoViaHashes);
-
+ const MemoizedInfoComponent = React.memo(InfoComponent);
+ const MemoizedInfoViaHashesComponent = React.memo(InfoViaHashes);
 
 interface BlockInfoProps {
    client: GrpcManager,
@@ -151,33 +25,34 @@ interface BlockInfoProps {
 }
 
 interface BlockInfoState {
-  hash: Uint8Array | string | undefined,
-  height: number | undefined | undefined,
-  version: number | undefined,
-  previousBlock: Uint8Array | string | undefined,
-  merkleRoot: Uint8Array | string | undefined,
-  timestamp: number | undefined,
-  bits: number | undefined,
-  nonce: number | undefined,
-  confirmations: number | undefined,
-  difficulty: number | undefined,
-  nextBlockHash: Uint8Array | string | undefined,
-  size: number | undefined,
-  medianTime: number | undefined,
-  transactions: number | false | undefined,
-  blockHash: string | undefined
+  hash: Uint8Array | string,
+  height: number,
+  version: number,
+  previousBlock: Uint8Array | string,
+  merkleRoot: Uint8Array | string,
+  timestamp: number,
+  bits: number,
+  nonce: number,
+  confirmations: number,
+  difficulty: number,
+  nextBlockHash: Uint8Array | string,
+  size: number,
+  medianTime: number,
+  transactions: number | false,
+  blockHash: string
 }
 
 
 class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
 
   searchBlockInputRef: React.RefObject<any>;
+  initialValues: BlockInfoState;
 
   constructor(props: BlockInfoProps){
     super(props)
     this.searchBlockInputRef = React.createRef();
     // Setting default values
-    this.state ={
+    this.initialValues = {
       hash: "",
       height: 0,
       version: 0,
@@ -193,11 +68,8 @@ class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
       medianTime: 0,
       transactions: 0,
       blockHash: ""
-    }
-  }
-
-  componentDidMount(){
-    this.fetchBlockDetails({ blockHash: null })
+    };
+    this.state = { ...this.initialValues }
   }
 
   getSnapshotBeforeUpdate(prevProps, prevState) {
@@ -220,6 +92,11 @@ class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
     }
   }
 
+  /**
+   * 
+   * @param params{BlockHash}: Expects a blockHash and makes an RPC call to update the details
+   * using the setState method which later updates children components.
+   */
   fetchBlockDetails = ({ blockHash }) => {
     const { client, updateErrorState } = this.props;
     client && blockHash && client.getBlock({ hashHex: blockHash }).then((res) => {
@@ -249,20 +126,20 @@ class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
           const nextBlockHash = u8toHex(b2u)
 
           this.setState({
-            height: block.info?.height,
-            hash: blockHash,
-            version: block.info?.version,
-            previousBlock: previousBlock,
-            merkleRoot: merkleRoot,
-            timestamp: block.info?.timestamp,
-            bits: block.info?.bits,
-            nonce: block.info?.nonce,
-            confirmations: block.info?.confirmations,
-            difficulty: block.info?.difficulty,
-            nextBlockHash: nextBlockHash,
-            size: block.info?.size,
-            medianTime: block.info?.medianTime,
-            transactions: transactions
+            height: block.info?.height || this.initialValues.height,
+            hash: blockHash || this.initialValues.hash,
+            version: block.info?.version || this.initialValues.version,
+            previousBlock: previousBlock || this.initialValues.previousBlock,
+            merkleRoot: merkleRoot || this.initialValues.merkleRoot,
+            timestamp: block.info?.timestamp || this.initialValues.timestamp,
+            bits: block.info?.bits || this.initialValues.bits,
+            nonce: block.info?.nonce || this.initialValues.nonce,
+            confirmations: block.info?.confirmations || this.initialValues.confirmations,
+            difficulty: block.info?.difficulty || this.initialValues.difficulty,
+            nextBlockHash: nextBlockHash || this.initialValues.nextBlockHash,
+            size: block.info?.size || this.initialValues.size,
+            medianTime: block.info?.medianTime || this.initialValues.medianTime,
+            transactions: transactions || this.initialValues.transactions
           })
         }
       }).catch((err) => {
@@ -271,19 +148,35 @@ class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
       })
   }
 
+  /**
+   * When search button is triggered, this method is responsible for updating the blockhash in the
+   * redux store as well as fetching the details about the block.
+   */
   onSearchBlock = () => {
     const ref = this.searchBlockInputRef.current
     this.fetchBlockDetails({ blockHash: ref.value })
     this.props.updateBlockHash({ blockHash: ref.value })
   }
 
-  onChangeSearchVal = (event) => {
+  /**
+   * Updates the state of blockHash and maintains a text on the searching area.
+   * The value of `<input>` is derived from the blockHash state.
+   * @param event : Default event handler.
+   */
+  onChangeSearchValue = (event) => {
     const {value}  = event.target
-    this.setState(() => {return { blockHash: value }})
+    this.setState(() => {
+      return { blockHash: value }
+    })
   }
 
+  /**
+   * 
+   * @param blockHash : Expects a block hash and makes an RPC call from via the client.
+   * The returned data is then used to update local state to be displayed later.
+   */
   getAndUpdateBlockHash = (blockHash) => {
-    this.fetchBlockDetails({ blockHash: blockHash })
+    this.fetchBlockDetails({ blockHash })
   }
 
   renderSearch = () => {
@@ -293,7 +186,7 @@ class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
         <div className="field has-addons is-12">
           <div className="control is-expanded">
             <input value={this.state.blockHash}
-              onChange={this.onChangeSearchVal}
+              onChange={this.onChangeSearchValue}
               ref={this.searchBlockInputRef}
               className="input is-rounded is-large"
               type="text"
@@ -310,13 +203,6 @@ class BlockInfo extends React.PureComponent<BlockInfoProps, BlockInfoState>{
     )
   }
 
-  // Need to perform the check for `clientError` because once the component is rendered,
-  // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
-  // and in the parent component we have added a statement to render undefined/some other 
-  // component when the value of `clientError` changes. If you remove the check you might see
-  // a warning like this:
-  // Warning: Can't perform a React state update on an unmounted component.
-  // This is a no-op, but it indicates a memory leak in your application.
   render(){
     return (
       <div className="box">
