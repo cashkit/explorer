@@ -78,7 +78,7 @@ return(
   <>
     <div className="tile is-ancestor">
       <div className="tile is-parent">
-        <article className="tile is-child box has-text-left  is-info">
+        <article className="tile is-child box has-text-left notification is-primary">
           <p className="is-size-4 has-text-weight-medium">Tx Hash</p>
           <div className="content">{hash}</div>
         </article>
@@ -103,22 +103,15 @@ function InfoInputOutputHashes({ inputsList, outputsList, onClickHash }
   let InputsComponent: any = undefined;
   if (inputsList){
   InputsComponent = inputsList.map((input) => {
-      const hash64 = input.address
-      // @ts-ignore
-      const b2u = base64toU8(hash64).reverse()
-      const txHash = u8toHex(b2u)
-       const addr = input.address
-       return <div key={txHash} className="content">{addr}</div>
+      const addr = input.address
+       return <div key={addr} className="content">bitcoincash:{addr}</div>
      })
   }
   let OutputsComponent: any = undefined;
   if (outputsList){
   OutputsComponent = outputsList.map((output) => {
-       const hash64 = output.address
-       // @ts-ignore
-       const b2u = base64toU8(hash64).reverse()
-       const txHash = u8toHex(b2u)
-       return <div key={txHash} className="content">{txHash}</div>
+       const addr = output.address
+       return <div key={addr} className="content">bitcoincash:{addr}</div>
      })
   }
 return(
@@ -331,7 +324,10 @@ class TxInfo extends React.PureComponent<TxInfoProps, TxInfoState>{
           </div>
         </div>
           <MemoizedInfoViaHashesComponent {...this.state} onClickHash={this.getAndUpdateTxHash} />
-          <MemoizedInfoInputOutputHashes {...this.state} onClickHash={this.getAndUpdateTxHash}/>
+          <MemoizedInfoInputOutputHashes 
+            {...this.state}
+            onClickHash={this.getAndUpdateTxHash}
+          />
       </div>
       
     );

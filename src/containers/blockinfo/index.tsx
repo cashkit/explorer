@@ -101,7 +101,7 @@ return(
   <>
     <div className="tile is-ancestor">
       <div className="tile is-parent">
-        <article className="tile is-child box has-text-left  is-info">
+        <article className="tile is-child box has-text-left notification is-primary">
           <p className="is-size-4 has-text-weight-medium">Block Hash</p>
           <div className="content">{hash}</div>
         </article>

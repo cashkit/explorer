@@ -26,12 +26,10 @@ interface AppState {
 
 class Landing extends React.Component<AppProps, AppState>{
     txInfoRef: React.RefObject<any>;
-    blockInfoRef: React.RefObject<any>;
 
     constructor(props){
       super(props);
       this.txInfoRef = React.createRef();
-      this.blockInfoRef = React.createRef();
       this.state = {
         clientError: this.props.clientError,
         hide_error: false
@@ -45,8 +43,9 @@ class Landing extends React.Component<AppProps, AppState>{
     renderError = () => {
       const { clientError } = this.props;
         return (
-          <div className="notification is-danger" style={{
+          <div className="notification" style={{
             backgroundColor: "#85f1a5",
+            color: 'white',
             position: "sticky",
             zIndex: 1,
             left: "50%",
@@ -123,17 +122,14 @@ class Landing extends React.Component<AppProps, AppState>{
             >
               <meta name="description" content="Dashboard: A CashWeb application" />
             </Helmet>
-            
-            {/* <header className="App-header"> */}
-              {this.renderError()}
-            {/* </header> */}
+            {this.renderError()}
 
             <div className="section">            
               <div className="columns">
                 <div className="column">
-                  <Profiler id="BlockchainInfo" onRender={this.onRenderProfilerCallback}>
+                  {/* <Profiler id="BlockchainInfo" onRender={this.onRenderProfilerCallback}> */}
                     {this.renderBlockchainInfo()}
-                  </Profiler>
+                  {/* </Profiler> */}
                 </div>
                 <div className="column">
                     {this.renderTransactionsInfo()}
@@ -141,16 +137,16 @@ class Landing extends React.Component<AppProps, AppState>{
               </div>
             </div>
 
-            <div className="section" ref={this.blockInfoRef}>            
-              <Profiler id="BlockInfo" onRender={this.onRenderProfilerCallback}>
+            <div className="section">            
+              {/* <Profiler id="BlockInfo" onRender={this.onRenderProfilerCallback}> */}
                 {this.renderBlockInfo()}
-              </Profiler>
+              {/* </Profiler> */}
             </div>
 
             <div className="section" ref={this.txInfoRef}>            
-              <Profiler id="Tx Info" onRender={this.onRenderProfilerCallback}>
+              {/* <Profiler id="Tx Info" onRender={this.onRenderProfilerCallback}> */}
                 {this.renderTxInfo()}
-              </Profiler>
+              {/* </Profiler> */}
             </div>
             
             <footer className="footer">
