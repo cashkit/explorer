@@ -2,7 +2,7 @@ import React, { lazy, Profiler } from 'react';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 
-import ErrorBoundary from '../../ErrorBoundary';
+import { ErrorBoundary } from '../../common';
 import { checkClient } from '../../redux';
 import { InfoBar } from '../../common';
 

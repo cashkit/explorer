@@ -4,7 +4,8 @@ import { GrpcManager } from '../../managers';
 import { updateErrorState, updateBlockHash } from '../../redux';
 import { base64toU8, u8toHex } from '../../utils';
 
-import { BlockInfo, BlockInfoViaHashes } from './components';
+import { BlockInfo } from './components/BlockInfo';
+import { BlockInfoViaHashes } from './components/BlockInfoViaHashes';
 
 /**
  * From React Docs:

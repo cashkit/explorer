@@ -1,21 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, } from 'react-redux';
+import * as grpcWeb from 'grpc-web';
+
+import { TxnDisplay } from './components/TxnDisplay';
 
 import { updateErrorState, updateTxHash } from '../../redux';
-import * as grpcWeb from 'grpc-web';
 import { TransactionNotification } from '../../protos/bchrpc_pb'
 import { GrpcManager } from '../../managers';
 import { base64toU8, u8toHex } from '../../utils';
+
+// Memoized Component
+const MemoizedTxnDisplay = React.memo(TxnDisplay);
 
 // Interfaces
 
 interface TransactionsProps {
    scrollToTransactionDetails: () => void,
-}
-
-interface TxnDisplayInterface {
-  transaction: any,
-  onClickTransaction: any
 }
 
 // Hooks
@@ -99,22 +99,6 @@ const useAsyncHook = () => {
 
   return txns
 }
-
-/**
- * @param transaction: Transaction hash
- * @param onClickTransaction: Callback function for click event on transaction hash.
- * @returns 
- */
-const TxnDisplay = ({transaction, onClickTransaction}: TxnDisplayInterface ) => {
-  return (
-    <p key={transaction}>
-        transaction: <a onClick={() => onClickTransaction(transaction)} className="content">{transaction}</a>
-    </p>
-  )
-}
-
-// Memoized Component
-const MemoizedTxnDisplay = React.memo(TxnDisplay);
 
 /**
  * Main component that gets rendered
