@@ -17,7 +17,6 @@ import { BlockInfo, BlockInfoViaHashes } from './components';
  const MemoizedInfoViaHashesComponent = React.memo(BlockInfoViaHashes);
 
 interface BlockInfoProps {
-   client: GrpcManager,
    updateErrorState: ({}) => void,
    updateBlockHash: ({}) => void,
    blockHash: string | null,
@@ -98,8 +97,8 @@ class Block extends React.PureComponent<BlockInfoProps, BlockInfoState>{
    * using the setState method which later updates children components.
    */
   fetchBlockDetails = ({ blockHash }) => {
-    const { client, updateErrorState } = this.props;
-    client && blockHash && client.getBlock({ hashHex: blockHash }).then((res) => {
+    const { updateErrorState } = this.props;
+    blockHash && GrpcManager.Instance.getBlock({ hashHex: blockHash }).then((res) => {
         // Convert the blockhash from base64 to hex.
         const block = res.hasBlock() && res.getBlock()?.toObject()
         const transactions = res.hasBlock() && res.getBlock()?.getTransactionDataList().length
@@ -233,7 +232,6 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
 	return {
-    client: state.AppReducer.client,
     blockHash: state.BlockReducer.blockHash,
 		clientError: state.AppReducer.clientError,
   };

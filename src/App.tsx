@@ -8,12 +8,22 @@ import { Landing } from './views';
 
 import { store } from './redux';
 import 'normalize.css';
-// import './App.css';
 
 import "../node_modules/bulma/bulma.sass";
 import './App.sass'
 
+import { BASE_URL } from './configs';
+import { GrpcManager } from './managers';
+
+
 const Error404 = React.lazy(() => import('./views/error404'));
+
+// Initiate the GrpcManager Instance
+GrpcManager.Init({
+  url: BASE_URL,
+  testnet: false,
+  options: null
+})
 
 /**
  * 

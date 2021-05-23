@@ -4,13 +4,13 @@ FROM node:alpine
 WORKDIR /app
 
 # Copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json .
+COPY ./package*.json ./
 
 # Install project dependencies
 RUN npm install
 
 # Copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
+COPY ./ ./
 
 # Run on development mode
 RUN npm run start

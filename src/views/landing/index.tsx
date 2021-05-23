@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 
 import ErrorBoundary from '../../ErrorBoundary';
-import { createNewClient } from '../../redux';
+import { checkClient } from '../../redux';
 import { InfoBar } from '../../common';
 
 import * as bchrpc from '../../protos/BchrpcServiceClientPb';
@@ -17,7 +17,7 @@ const TxInfo = lazy(() => import("../../containers/txn"));
 interface AppProps {
   client: bchrpc.bchrpcClient,
   clientError: string | null,
-  createNewClient: Function
+  checkClient: Function
 }
 
 interface AppState {
@@ -38,7 +38,7 @@ class Landing extends React.Component<AppProps, AppState>{
     }
 
     componentDidMount(){
-      this.props.createNewClient();
+      this.props.checkClient();
     }
 
     renderInfoBar = () => {
@@ -81,6 +81,11 @@ class Landing extends React.Component<AppProps, AppState>{
     }
 
     /**
+     * Usage:
+     *  <Profiler id="TxInfo" onRender={this.onRenderProfilerCallback}>
+     *      <Component/>
+     * </Profile>
+     * 
      * @param id - the "id" prop of the Profiler tree that has just committed.
      * @param phase - either "mount" (if the tree just mounted) or "update" (if it re-rendered).
      * @param actualDuration - time spent rendering the committed update
@@ -118,9 +123,7 @@ class Landing extends React.Component<AppProps, AppState>{
             <div className="section">            
               <div className="columns">
                 <div className="column">
-                  {/* <Profiler id="BlockchainInfo" onRender={this.onRenderProfilerCallback}> */}
                     {this.renderBlockchainInfo()}
-                  {/* </Profiler> */}
                 </div>
                 <div className="column">
                     {this.renderTransactionsInfo()}
@@ -129,15 +132,11 @@ class Landing extends React.Component<AppProps, AppState>{
             </div>
 
             <div className="section">            
-              {/* <Profiler id="BlockInfo" onRender={this.onRenderProfilerCallback}> */}
                 {this.renderBlockInfo()}
-              {/* </Profiler> */}
             </div>
 
             <div className="section" ref={this.txInfoRef}>            
-              {/* <Profiler id="Tx Info" onRender={this.onRenderProfilerCallback}> */}
                 {this.renderTxInfo()}
-              {/* </Profiler> */}
             </div>
             
             <footer className="footer">
@@ -156,8 +155,8 @@ class Landing extends React.Component<AppProps, AppState>{
 
 const mapDispatchToProps = dispatch => {
 	return {
-    createNewClient: () => {
-      dispatch(createNewClient());
+    checkClient: () => {
+      dispatch(checkClient());
     },
   };
 };

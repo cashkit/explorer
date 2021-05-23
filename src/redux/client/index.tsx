@@ -5,27 +5,26 @@ import { GrpcManager } from '../../managers';
  
 // Error types
 enum ClientErrors{
-    NOT_INITIATED = "NOT_INITIATED",
-    UNABLE_TO_CONNECT = "UNABLE_TO_CONNECT",
+  NOT_INITIATED = "NOT_INITIATED",
+  UNABLE_TO_CONNECT = "UNABLE_TO_CONNECT",
 	NOT_AVAILABLE = "NOT_AVAILABLE"
 }
 
 // Types
-const CREATE_GRPC_CLIENT = 'CREATE_GRPC_CLIENT';
+const CHECK_GRPC_CLIENT = 'CHECK_GRPC_CLIENT';
 const CREATE_GRPC_CLIENT_SUCCESS = 'CREATE_GRPC_CLIENT_SUCCESS';
 const CREATE_GRPC_CLIENT_FAILED = 'CREATE_GRPC_CLIENT_FAILED';
 const UPDATE_ERROR_STATE = "UPDATE_ERROR_STATE";
 
 const INITIAL_STATE = {
-	client: undefined,
 	clientError: ClientErrors.NOT_INITIATED
 };
 
 // Actions
 
-export const createNewClient = () => {
+export const checkClient = () => {
 	return {
-		type: CREATE_GRPC_CLIENT
+		type: CHECK_GRPC_CLIENT
 	};
 };
 
@@ -62,19 +61,10 @@ export const AppReducer = (state = INITIAL_STATE, action) => {
 
 // Sagas
 
-export function* workerCreateNewClient() {
+export function* workerCheckClient() {
 	try {
-		const client = new GrpcManager({
-			url: BASE_URL,
-			testnet: false,
-			options: null
-		})
-		if (client){
-			yield put({
-				type: CREATE_GRPC_CLIENT_SUCCESS,
-				payload: { client, clientError: null }
-			});
-		} else {
+		const client = GrpcManager.Instance
+		if (!client){
 			yield put({
 				type: CREATE_GRPC_CLIENT_FAILED,
 				payload: { clientError: ClientErrors.UNABLE_TO_CONNECT }
@@ -86,4 +76,4 @@ export function* workerCreateNewClient() {
 }
 
 
-export const watcherCreateNewClient = sagaWatcherHelper(workerCreateNewClient, CREATE_GRPC_CLIENT);
+export const watcherCheckClient = sagaWatcherHelper(workerCheckClient, CHECK_GRPC_CLIENT);

@@ -1,10 +1,13 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { GrpcManager } from '../../managers';
-import { updateErrorState, updateBlockHash } from '../../redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from 'reselect'
+
+import { BlockchainInfo } from './components/BlockchainInfo';
+
+import { updateErrorState, updateBlockHash, RootState } from '../../redux';
 import { GetBlockchainInfoResponse } from '../../protos/bchrpc_pb';
 import { base64toU8, u8toHex } from '../../utils';
-import { BlockchainInfo } from './components';
+import { GrpcManager } from '../../managers';
 
 /**
  * From React Docs:
@@ -15,111 +18,84 @@ import { BlockchainInfo } from './components';
  */
 const MemoizedInfoComponent = React.memo(BlockchainInfo);
 
+// Initial States
 
-interface BlockchainInfoProps {
-   client: GrpcManager,
-   updateErrorState: ({}) => void,
-   updateBlockHash: ({}) => void,
-   clientError: string | null
+const initialState = {
+  bitcoinNet: GetBlockchainInfoResponse.BitcoinNet.MAINNET,
+  bestHeight: 0,
+  bestBlockHash: '',
+  difficulty: 0,
+  medianTime: 0,
+  txIndex: false,
+  addrIndex: false,
+  slpIndex: false,
 }
 
-interface BlockchainInfoState {
-  bitcoinNet: GetBlockchainInfoResponse.BitcoinNet,
-  bestHeight: number,
-  bestBlockHash: Uint8Array | string,
-  difficulty: number,
-  medianTime: number,
-  txIndex: boolean,
-  addrIndex: boolean,
-  slpIndex: boolean,
-  // Requires a Separate call.
-  mempoolSize: number,
+const initialMempoolState = {
+  mempoolSize: 0,
 }
 
+// Custom selector
 
-class NodeInfo extends React.PureComponent<BlockchainInfoProps, BlockchainInfoState>{
+// const selectClient= createSelector(
+//     (state: RootState) => state.AppReducer,
+//     AppReducer => AppReducer.client
+// )
 
-  constructor(props: BlockchainInfoProps){
-    super(props)
-    // Setting default values
-    this.state ={
-      bitcoinNet: GetBlockchainInfoResponse.BitcoinNet.MAINNET,
-      bestHeight: 0,
-      bestBlockHash: '',
-      difficulty: 0,
-      medianTime: 0,
-      txIndex: false,
-      addrIndex: false,
-      slpIndex: false,
-      // Requires a Separate call
-      mempoolSize: 0,
-    }
-  }
+// Custom hooks
 
-  componentDidMount(){
-    const { client, updateErrorState } = this.props;
-    client && client.getBlockchainInfo().then((res) => {
-        // Convert the blockhash from base64 to hex.
-        const base_tx = res.getBestBlockHash_asB64()
-        const b2u = base64toU8(base_tx).reverse()
-        const block_hash = u8toHex(b2u)
+const useBlockchainInfoHook = () => {
+  const [blockchainState, setBlockchainInfoState] = useState(initialState)
+  // const client = useSelector(selectClient)
+  const dispatch = useDispatch()
+  useEffect(() => {
+    GrpcManager.Instance.getBlockchainInfo().then((res) => {
+      // Convert the blockhash from base64 to hex.
+      const base_tx = res.getBestBlockHash_asB64()
+      const b2u = base64toU8(base_tx).reverse()
+      const blockHash = u8toHex(b2u)
 
-        // Set block hash on redux store as well.
-        this.props.updateBlockHash({ block_hash })
-        // Use spread operator on the entire response and later override specific values.
-        this.setState({ ...res.toObject(), bestBlockHash: block_hash})
-      }).catch((err) => {
-        console.log("[ERR] getBlockchainInfo: ", err)
-        updateErrorState({clientError: JSON.stringify(err)})
-      })
+      // Set block hash on redux store as well.
+      dispatch(updateBlockHash({ blockHash }))
+      // Use spread operator on the entire response and later override specific values.
+      setBlockchainInfoState({ ...res.toObject(), bestBlockHash: blockHash})
+    }).catch((err) => {
+      console.log("[ERR] getBlockchainInfo: ", err)
+      dispatch(updateErrorState({ clientError: JSON.stringify(err) }))
+    })
+  }, [dispatch])
 
-    client && client.getMempoolInfo().then((res) => {
-        this.setState({
-          mempoolSize: res.getSize()
-        })
+  return blockchainState
+}
+
+const useMempoolInfoHook = () => {
+  const [mempoolState, setLocalMempoolState] = useState(initialMempoolState)
+  // const client = useSelector(selectClient)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    GrpcManager.Instance.getMempoolInfo().then((res) => {
+      setLocalMempoolState({ mempoolSize: res.getSize() })
     }).catch((err) => {
         console.log("[ERR] getMempoolInfo: ", err)
-        updateErrorState({clientError: JSON.stringify(err)})
-    })
-  }
+        dispatch(updateErrorState({ clientError: JSON.stringify(err) }))
+    }) 
+  }, [dispatch])
 
-  // Need to perform the check for `clientError` because once the component is rendered,
-  // react tries to rerender/perform life cycles when any(the one component listens to) prop updates
-  // and in the parent component we have added a statement to render undefined/some other 
-  // component when the value of `clientError` changes. If you remove the check you might see
-  // a warning like this:
-  // Warning: Can't perform a React state update on an unmounted component.
-  // This is a no-op, but it indicates a memory leak in your application.
-  render(){
-    return (
-      <>
-        <h1 className="title">Node Information</h1>
-        <MemoizedInfoComponent {...this.state} />
-      </>
-    );
-    
-  }
+  return mempoolState
 }
 
-const mapDispatchToProps = dispatch => {
-	return {
-    updateErrorState: (args) => {
-      dispatch(updateErrorState(args));
-    },
-    updateBlockHash: (args) => {
-      dispatch(updateBlockHash(args));
-    }
-  };
-};
 
-const mapStateToProps = state => {
-	return {
-    client: state.AppReducer.client,
-		clientError: state.AppReducer.clientError,
-  };
-};
+const NodeInfo = () => {
+  const blockchainState = useBlockchainInfoHook()
+  const mempoolState = useMempoolInfoHook()
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(NodeInfo);
+  return (
+    <>
+      <h1 className="title">Node Information</h1>
+      <MemoizedInfoComponent {...blockchainState} {...mempoolState} />
+    </>
+  )
+}
+
+export default NodeInfo

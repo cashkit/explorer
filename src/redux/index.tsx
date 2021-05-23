@@ -1,51 +1,51 @@
-import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import { composeWithDevTools } from 'redux-devtools-extension';
-
 import { combineReducers } from 'redux';
 import { all, fork } from 'redux-saga/effects';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
+import { createLogger } from 'redux-logger'
 
-
-import { AppReducer, watcherCreateNewClient, createNewClient, updateErrorState } from './client';
+import { AppReducer, watcherCheckClient, checkClient, updateErrorState } from './client';
 import { BlockReducer, updateBlockHash } from './block';
 import { TxReducer, updateTxHash } from './txn';
-
-// **********
-// Reducers.
-// **********
 
 const reducers = combineReducers({
 	AppReducer,
 	BlockReducer,
 	TxReducer
 });
-
-// **********
-// Sagas.
-// **********
-
 const rootSaga = function*() {
 	yield all([
-		fork(watcherCreateNewClient),
+		fork(watcherCheckClient),
 	]);
 };
 
-// **********
-// Store Implementation
-// **********
-
-
 // Setup Redux-Saga
 const sagaMiddleware = createSagaMiddleware();
+const middleware = [...getDefaultMiddleware({ thunk: false }), sagaMiddleware];
 
-const store = createStore(reducers, {}, composeWithDevTools(applyMiddleware(sagaMiddleware)));
+const devMode = process.env.NODE_ENV === 'development';
+if (devMode) {
+	const logger = createLogger({});
+	middleware.push(logger);
+}
 
-// Initiate root saga.
+// Create the store
+const store = configureStore({
+	reducer: reducers,
+	middleware: middleware,
+	devTools: devMode,
+	preloadedState: {},
+})
+// Make sure to run the saga middleware.
 sagaMiddleware.run(rootSaga);
 
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
+
+
 export {
+	checkClient,
 	store,
-	createNewClient,
 	updateBlockHash,
 	updateErrorState,
 	updateTxHash

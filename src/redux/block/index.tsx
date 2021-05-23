@@ -9,8 +9,11 @@ const INITIAL_STATE = {
 
 // Actions
 
+interface blockHash {
+	blockHash: string | undefined
+}
 
-export const updateBlockHash = ({blockHash}) => {
+export const updateBlockHash = ({blockHash}: blockHash) => {
 	return {
 		type: UPDATE_BLOCK_HASH,
 		payload: blockHash

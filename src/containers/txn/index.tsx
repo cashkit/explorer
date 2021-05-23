@@ -19,7 +19,6 @@ const MemoizedInfoViaHashesComponent = React.memo(TxInfoViaHashes);
 const MemoizedInfoInputOutputHashes = React.memo(TxInfoInputOutputHashes);
 
 interface TransactionInfoProps {
-   client: GrpcManager,
    updateErrorState: ({}) => void,
    updateTxHash: ({}) => void,
    txHash: string | undefined,
@@ -90,9 +89,9 @@ class TransactionInfo extends React.PureComponent<TransactionInfoProps, Transact
   }
 
   fetchTxDetails = ({ txHash }) => {
-    const { client, updateErrorState } = this.props;
-    if (client && txHash){
-      client.getTransaction({ hashHex: txHash }).then((res) => {
+    const { updateErrorState } = this.props;
+    if (GrpcManager.Instance && txHash){
+      GrpcManager.Instance.getTransaction({ hashHex: txHash }).then((res) => {
           // Convert the blockhash from base64 to hex.
           const txn = res.hasTransaction() && res.getTransaction()?.toObject()
 
@@ -225,7 +224,6 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
 	return {
-    client: state.AppReducer.client,
     txHash: state.TxReducer.txHash,
 		clientError: state.AppReducer.clientError,
   };

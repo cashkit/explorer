@@ -4,10 +4,14 @@ import * as grpcWeb from "grpc-web";
 import * as bchrpc from "../../protos/bchrpc_pb";
 import * as bchrpc_pb_service from "../../protos/BchrpcServiceClientPb";
 import * as util from "../../utils";
+import { BASE_URL } from "../../configs";
+
 
 export default class GrpcManager{
 
     public client: bchrpc_pb_service.bchrpcClient;
+
+    private static classInstance?: GrpcManager;
 
     /**
      * Create a client.
@@ -15,16 +19,12 @@ export default class GrpcManager{
      * @param testnet - Whether testnet is being used, default:false.
      * @param options - grpc client options.
      */
-    constructor({ url, testnet = false, options }:
+    private constructor({ url, testnet = false, options = null }:
         { url?: string; testnet?: boolean; options: null | { [index: string]: string; } }) {
         if (typeof url === 'string') {
-            // Do nothing.
-        } else if (!url && !testnet) {
-            url = "https://bchd.fountainhead.cash:443";
-            // url = "https://bchd.greyh.at:8335";
-
-        } else if (!url) {
-            url = "https://bchd-testnet.greyh.at:18335";
+            // pass
+        } else {
+            url = "http://localhost:8080";
         }
         if (!options) {
             options = {
@@ -33,6 +33,43 @@ export default class GrpcManager{
         }
         this.client = new bchrpc_pb_service.bchrpcClient(url, null, options);
     }
+
+    /**
+     * Initiates the GrpcManager instance.
+     * @param params { url, testnet, options }
+     */
+    public static Init(params) {
+      if (!this.classInstance) {
+        this.classInstance = new GrpcManager(params);
+      }
+    }
+
+    /**
+     * Force reset the instance of the GrpcManager.
+     * @param params { url, testnet, options }
+     * @returns instance
+     */
+    public static resetInstance(params) {
+      if (params) {
+        this.classInstance = new GrpcManager(params);
+        return this.classInstance
+      } else {
+        throw("No instance available for GrpcManager, try calling \
+        GrpcManager.getInstance({ url, testnet, options }). ")
+      }
+    }
+
+    /**
+     * Get the instance of the GrpcManager using GrpcManager.Instance
+     */
+    public static get Instance() {
+      if (!this.classInstance) {
+        throw("No instance available for GrpcManager, try calling \
+        GrpcManager.getInstance({ url, testnet, options }). ")
+      }
+      return this.classInstance;
+    }
+    
 
     /**
      * Get information about transactions in mempool
@@ -452,3 +489,5 @@ export default class GrpcManager{
     // }
 
 }
+
+  
