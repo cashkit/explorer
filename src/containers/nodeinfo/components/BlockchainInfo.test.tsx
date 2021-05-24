@@ -2,6 +2,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import { BlockchainInfo, BlockchainInfoProps } from './BlockchainInfo';
 
+
 const props: BlockchainInfoProps = {
     bitcoinNet: 0,
     bestHeight: 0,

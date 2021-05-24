@@ -13,17 +13,27 @@ export interface BlockchainInfoInterface {
     mempoolSize: number
 }
 
+const getNetworkName = (networkCode) => {
+  if (networkCode == GetBlockchainInfoResponse.BitcoinNet.MAINNET) { return "MAINNET" }
+  else if (networkCode == GetBlockchainInfoResponse.BitcoinNet.REGTEST) { return "REGTEST" }
+  else if (networkCode == GetBlockchainInfoResponse.BitcoinNet.TESTNET3) { return "TESTNET3" }
+  else if (networkCode == GetBlockchainInfoResponse.BitcoinNet.SIMNET) { return "SIMNET" }
+  return "UNKNOWN"
+}
 
 export const BlockchainInfo = ({ bitcoinNet, bestHeight, bestBlockHash,
     difficulty, medianTime, txIndex, addrIndex, slpIndex, mempoolSize }
     : BlockchainInfoInterface) => {
+  
+  const networkName = getNetworkName(bitcoinNet)
   return(
+    
     <>
       <div className="tile is-ancestor">
         <div className="tile is-parent">
           <article className="tile is-child box has-text-left">
             <p className="is-size-4 has-text-weight-medium"> Network</p>
-            <div className="content">{bitcoinNet}</div>
+            <div className="content">{networkName}</div>
           </article>
         </div>
         <div className="tile is-parent">
