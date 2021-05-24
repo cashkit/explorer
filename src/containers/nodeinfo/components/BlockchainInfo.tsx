@@ -13,7 +13,15 @@ export interface BlockchainInfoInterface {
     mempoolSize: number
 }
 
-const getNetworkName = (networkCode) => {
+export interface NetworkCodeInterface {
+  networkCode?: GetBlockchainInfoResponse.BitcoinNet,
+}
+
+/**
+ * @param networkCode : GetBlockchainInfoResponse.BitcoinNet.MAINNET
+ * @returns String Name of the network code.
+ */
+const getNetworkName = ({networkCode}: NetworkCodeInterface) => {
   if (networkCode == GetBlockchainInfoResponse.BitcoinNet.MAINNET) { return "MAINNET" }
   else if (networkCode == GetBlockchainInfoResponse.BitcoinNet.REGTEST) { return "REGTEST" }
   else if (networkCode == GetBlockchainInfoResponse.BitcoinNet.TESTNET3) { return "TESTNET3" }
@@ -25,9 +33,8 @@ export const BlockchainInfo = ({ bitcoinNet, bestHeight, bestBlockHash,
     difficulty, medianTime, txIndex, addrIndex, slpIndex, mempoolSize }
     : BlockchainInfoInterface) => {
   
-  const networkName = getNetworkName(bitcoinNet)
+  const networkName = getNetworkName({networkCode: bitcoinNet})
   return(
-    
     <>
       <div className="tile is-ancestor">
         <div className="tile is-parent">
