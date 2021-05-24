@@ -1,8 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+/**
+ * 
+ * React.StrictMode: According to the Docs, React Strict mode currently helps with:
+ * - Identifying components with unsafe lifecycles
+ * - Warning about legacy string ref API usage
+ * - Warning about deprecated findDOMNode usage
+ * - Detecting unexpected side effects
+ * - Detecting legacy context API
+ */
 
 ReactDOM.render(
   <React.StrictMode>

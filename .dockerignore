@@ -11,6 +11,7 @@
 .dockerignore
 .travis.yml
 Dockerfile
+Dockerfile.dev
 CHANGES
 LICENSE
 README.md

@@ -7,16 +7,24 @@ services:
     restart: on-failure
     ports:
       - '8080:8080'
-  # webclient:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - '3000:3000'
-  #   restart: on-failure
-  #   volumes:
-  #     - /app/node_modules
-  #     - ./webclient:/app
-  #   depends_on:
-  #     - proxy
-  #   tty: true
+  webclient:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3000:3000'
+    restart: on-failure
+    volumes:
+      - /app/node_modules
+      - .:/app
+    depends_on:
+      - proxy
+    tty: true
+  tests:
+      build:
+        context: .
+        dockerfile: Dockerfile.dev
+      volumes:
+        - /app/node_modules
+        - .:/app    
+      command: ["npm", "run", "test"]

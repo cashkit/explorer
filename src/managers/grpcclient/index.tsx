@@ -4,7 +4,6 @@ import * as grpcWeb from "grpc-web";
 import * as bchrpc from "../../protos/bchrpc_pb";
 import * as bchrpc_pb_service from "../../protos/BchrpcServiceClientPb";
 import * as util from "../../utils";
-import { BASE_URL } from "../../configs";
 
 
 export default class GrpcManager{
