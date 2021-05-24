@@ -1,22 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect'
+import { RootState } from '../redux';
 
 
-interface InfoErrorProps {
-  content: string | null | undefined
-}
+/**
+ * Fetch the value of clientError from the redux store.
+ */
+ const clientErrorSelector = createSelector(
+  (state: RootState) => state.AppReducer,
+  AppReducer => AppReducer.clientError
+)
 
-export const InfoBar = ({content}: InfoErrorProps) => {
+export const InfoBar = () => {
+  const [ isVisible, setVisible ] = useState(false)
+  const clientError = useSelector(clientErrorSelector)
+
+  useEffect(() => {
+    if (clientError){
+      setVisible(true)
+    } else {
+      setVisible(false)
+    }
+  }, [clientError])
+
+  const toggleVisible = () => {
+    if (isVisible){
+      setVisible(!isVisible)
+    }
+  }
+
+  const renderContent = () => {
+    if (isVisible){
+      return (
+        <>
+        <div className="column">
+          {clientError || ""}
+        </div>
+        <button className="button is-danger" onClick={toggleVisible}>X</button>
+        </>
+      )
+    }
+    return <div/>
+  }
+
   return (
-    <div className="notification" style={{
+    <div className="notification columns" style={{
       backgroundColor: "#85f1a5",
       color: 'white',
       position: "sticky",
-      zIndex: 1,
+      zIndex: 10,
       left: "50%",
       top: "0%",
       boxShadow: "2px 2px 5px -2px rgba(0,0,0,0.28)"
     }}>
-      {content || ""}
+      {renderContent()}
     </div>
   )
 }

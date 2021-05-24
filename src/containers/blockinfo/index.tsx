@@ -1,201 +1,179 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from 'reselect'
+
 import { GrpcManager } from '../../managers';
-import { updateErrorState, updateBlockHash } from '../../redux';
+import { updateErrorState, updateBlockHash, RootState } from '../../redux';
 import { base64toU8, u8toHex } from '../../utils';
 
-import { BlockInfo } from './components/BlockInfo';
-import { BlockInfoViaHashes } from './components/BlockInfoViaHashes';
+import { MemoizedInfoComponent } from './components/BlockInfo';
+import { MemoizedInfoViaHashesComponent } from './components/BlockInfoViaHashes';
+
+
+const initialState = {
+  hash: "",
+  height: 0,
+  version: 0,
+  previousBlock: "",
+  merkleRoot: "",
+  timestamp: 0,
+  bits: 0,
+  nonce: 0,
+  confirmations: 0,
+  difficulty: 0,
+  nextBlockHash: "",
+  size: 0,
+  medianTime: 0,
+  transactions: 0,
+};
+
+const initialBlockHashState = {
+  blockHash: "",
+};
+
 
 /**
- * From React Docs:
- * If your component renders the same result given the same props,
- * you can wrap it in a call to React.memo for a performance boost
- * in some cases by memoizing the result. This means that React will
- * skip rendering the component, and reuse the last rendered result.
+ * Fetch the value of blockHash from the redux store.
  */
- const MemoizedInfoComponent = React.memo(BlockInfo);
- const MemoizedInfoViaHashesComponent = React.memo(BlockInfoViaHashes);
+const blockHashSelector = createSelector(
+    (state: RootState) => state.BlockReducer,
+    BlockReducer => BlockReducer.blockHash
+)
 
-interface BlockInfoProps {
-   updateErrorState: ({}) => void,
-   updateBlockHash: ({}) => void,
-   blockHash: string | null,
-   clientError: string | null
-}
+const Block = () => {
+  const [blockHashState, setLocalBlockHash] = useState(initialBlockHashState);
+  const [blockState, setBlockState] = useState(initialState);
+  const dispatch = useDispatch();
+  const searchBlockInputRef = useRef<any>(null);
+  const resHash = useSelector(blockHashSelector)
 
-interface BlockInfoState {
-  hash: Uint8Array | string,
-  height: number,
-  version: number,
-  previousBlock: Uint8Array | string,
-  merkleRoot: Uint8Array | string,
-  timestamp: number,
-  bits: number,
-  nonce: number,
-  confirmations: number,
-  difficulty: number,
-  nextBlockHash: Uint8Array | string,
-  size: number,
-  medianTime: number,
-  transactions: number | false,
-  blockHash: string
-}
+  /**
+   * Acts as ComponentDidMount, tries to fetch blockdetails if resHash is defined.
+   */
+  useEffect(() => {
+    resHash && fetchBlockDetails({ blockHash: resHash })
+  // eslint-disable-next-line
+  }, [])
 
-
-class Block extends React.PureComponent<BlockInfoProps, BlockInfoState>{
-
-  searchBlockInputRef: React.RefObject<any>;
-  initialState: BlockInfoState;
-
-  constructor(props: BlockInfoProps){
-    super(props)
-    this.searchBlockInputRef = React.createRef();
-    // Setting default values
-    this.initialState = {
-      hash: "",
-      height: 0,
-      version: 0,
-      previousBlock: "",
-      merkleRoot: "",
-      timestamp: 0,
-      bits: 0,
-      nonce: 0,
-      confirmations: 0,
-      difficulty: 0,
-      nextBlockHash: "",
-      size: 0,
-      medianTime: 0,
-      transactions: 0,
-      blockHash: ""
-    };
-    this.state = { ...this.initialState }
-  }
-
-  getSnapshotBeforeUpdate(prevProps, prevState) {
-    // If the new hash is different forom the old one.
-    // return the snapshot to be compared later.
-    if (prevProps.blockHash !== this.props.blockHash) {
-      return this.props.blockHash
-    }
-    return null;
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    // If we have a snapshot value, we've just added new items.
-    // Adjust scroll so these new items don't push the old ones out of view.
-    // (snapshot here is the value returned from getSnapshotBeforeUpdate)
-    if (snapshot !== null) {
-      this.setState({ blockHash: snapshot }, () => {
-        this.fetchBlockDetails({ blockHash: snapshot })
-      })
-    }
-  }
+  /**
+   * Acts as ComponentWillReceiveProps, listens to changes to resHash and calls `fetchBlockDetails`
+   * if the value is changed.
+   */
+  useEffect(() => {
+    fetchBlockDetails({ blockHash: resHash })
+  // eslint-disable-next-line
+  }, [resHash])
 
   /**
    * 
    * @param params{BlockHash}: Expects a blockHash and makes an RPC call to update the details
    * using the setState method which later updates children components.
    */
-  fetchBlockDetails = ({ blockHash }) => {
-    const { updateErrorState } = this.props;
+  const fetchBlockDetails = ({ blockHash }) => {
     blockHash && GrpcManager.Instance.getBlock({ hashHex: blockHash }).then((res) => {
-        // Convert the blockhash from base64 to hex.
-        const block = res.hasBlock() && res.getBlock()?.toObject()
-        const transactions = res.hasBlock() && res.getBlock()?.getTransactionDataList().length
+      // Convert the blockhash from base64 to hex.
+      const block = res.hasBlock() && res.getBlock()?.toObject()
+      const transactions = res.hasBlock() && res.getBlock()?.getTransactionDataList().length
 
-        if (block){
-          let hash64 = res.getBlock()?.getInfo()?.getHash_asB64()
-          // @ts-ignore
-          let b2u = base64toU8(hash64).reverse()
-          const blockHash = u8toHex(b2u)
+      if (block){
+        let hash64 = res.getBlock()?.getInfo()?.getHash_asB64()
+        // @ts-ignore
+        let b2u = base64toU8(hash64).reverse()
+        const blockHash = u8toHex(b2u)
 
-          hash64 = res.getBlock()?.getInfo()?.getPreviousBlock_asB64()
-          // @ts-ignore
-          b2u = base64toU8(hash64).reverse()
-          const previousBlock = u8toHex(b2u)
+        hash64 = res.getBlock()?.getInfo()?.getPreviousBlock_asB64()
+        // @ts-ignore
+        b2u = base64toU8(hash64).reverse()
+        const previousBlock = u8toHex(b2u)
 
-          hash64 = res.getBlock()?.getInfo()?.getMerkleRoot_asB64()
-          // @ts-ignore
-          b2u = base64toU8(hash64).reverse()
-          const merkleRoot = u8toHex(b2u)
+        hash64 = res.getBlock()?.getInfo()?.getMerkleRoot_asB64()
+        // @ts-ignore
+        b2u = base64toU8(hash64).reverse()
+        const merkleRoot = u8toHex(b2u)
 
-          hash64 = res.getBlock()?.getInfo()?.getNextBlockHash_asB64()
-          // @ts-ignore
-          b2u = base64toU8(hash64).reverse()
-          const nextBlockHash = u8toHex(b2u)
+        hash64 = res.getBlock()?.getInfo()?.getNextBlockHash_asB64()
+        // @ts-ignore
+        b2u = base64toU8(hash64).reverse()
+        const nextBlockHash = u8toHex(b2u)
 
-          this.setState({
-            height: block.info?.height || this.initialState.height,
-            hash: blockHash || this.initialState.hash,
-            version: block.info?.version || this.initialState.version,
-            previousBlock: previousBlock || this.initialState.previousBlock,
-            merkleRoot: merkleRoot || this.initialState.merkleRoot,
-            timestamp: block.info?.timestamp || this.initialState.timestamp,
-            bits: block.info?.bits || this.initialState.bits,
-            nonce: block.info?.nonce || this.initialState.nonce,
-            confirmations: block.info?.confirmations || this.initialState.confirmations,
-            difficulty: block.info?.difficulty || this.initialState.difficulty,
-            nextBlockHash: nextBlockHash || this.initialState.nextBlockHash,
-            size: block.info?.size || this.initialState.size,
-            medianTime: block.info?.medianTime || this.initialState.medianTime,
-            transactions: transactions || this.initialState.transactions
-          })
-        }
-      }).catch((err) => {
-        console.log("[ERR] fetchBlockDetails: ", err)
-        this.setState({ ...this.initialState })
-        updateErrorState({clientError: JSON.stringify(err)})
-      })
+        setBlockState({
+          height: block.info?.height || initialState.height,
+          hash: blockHash || initialState.hash,
+          version: block.info?.version || initialState.version,
+          previousBlock: previousBlock || initialState.previousBlock,
+          merkleRoot: merkleRoot || initialState.merkleRoot,
+          timestamp: block.info?.timestamp || initialState.timestamp,
+          bits: block.info?.bits || initialState.bits,
+          nonce: block.info?.nonce || initialState.nonce,
+          confirmations: block.info?.confirmations || initialState.confirmations,
+          difficulty: block.info?.difficulty || initialState.difficulty,
+          nextBlockHash: nextBlockHash || initialState.nextBlockHash,
+          size: block.info?.size || initialState.size,
+          medianTime: block.info?.medianTime || initialState.medianTime,
+          transactions: transactions || initialState.transactions,
+        })
+        setLocalBlockHash({
+          blockHash: blockHash || initialState.hash,
+        })
+
+      }
+    }).catch((err) => {
+      console.log("[ERR] fetchBlockDetails: ", err)
+      setBlockState({ ...initialState })
+      dispatch(updateErrorState({clientError: JSON.stringify(err)}))
+    })
   }
+
 
   /**
    * When search button is triggered, this method is responsible for updating the blockhash in the
    * redux store as well as fetching the details about the block.
    */
-  onSearchBlock = () => {
-    const ref = this.searchBlockInputRef.current
-    this.fetchBlockDetails({ blockHash: ref.value })
-    this.props.updateBlockHash({ blockHash: ref.value })
+  const onSearchBlock = () => {
+    const ref = searchBlockInputRef.current
+    if (ref?.value){
+      fetchBlockDetails({ blockHash: ref.value })
+      dispatch(updateBlockHash({ blockHash: ref.value }))
+    }
   }
 
   /**
-   * Updates the state of blockHash and maintains a text on the searching area.
-   * The value of `<input>` is derived from the blockHash state.
-   * @param event : Default event handler.
-   */
-  onChangeSearchValue = (event) => {
-    const {value}  = event.target
-    this.setState(() => {
-      return { blockHash: value }
-    })
+  * Updates the state of blockHash and maintains a text on the searching area.
+  * The value of `<input>` is derived from the blockHash state.
+  * @param event : Default event handler.
+  */
+  const onChangeSearchValue = (event) => {
+    const { value }  = event.target
+    setLocalBlockHash({ blockHash: value })
   }
 
   /**
+   * Gets the value from the callback functions defined in the memoized components.
    * 
    * @param blockHash : Expects a block hash and makes an RPC call from via the client.
    * The returned data is then used to update local state to be displayed later.
    */
-  getAndUpdateBlockHash = (blockHash) => {
-    this.fetchBlockDetails({ blockHash })
+  const getAndUpdateBlockHash = (blockHash) => {
+    fetchBlockDetails({ blockHash })
   }
 
-  renderSearch = () => {
+  const renderSearch = () => {  
     return(
       <div className="mb-4">
         <h1 className="title">Block Information</h1>
         <div className="field has-addons is-12">
           <div className="control is-expanded">
-            <input value={this.state.blockHash}
-              onChange={this.onChangeSearchValue}
-              ref={this.searchBlockInputRef}
+            <input
+              value={blockHashState.blockHash}
+              onChange={onChangeSearchValue}
+              ref={searchBlockInputRef}
               className="input is-rounded is-large"
               type="text"
               placeholder="block hash"
             />
           </div>
           <div className="control">
-            <a className="button is-link is-large" onClick={this.onSearchBlock}>
+            <a className="button is-link is-large" onClick={onSearchBlock}>
               Search
             </a>
           </div>
@@ -204,41 +182,19 @@ class Block extends React.PureComponent<BlockInfoProps, BlockInfoState>{
     )
   }
 
-  render(){
-    return (
-      <div className="box">
-        {this.renderSearch()}
-        <div className="columns">
-          <div className="column">
-            <MemoizedInfoComponent {...this.state} />
-          </div>
+  return (
+    <div className="box">
+      {renderSearch()}
+      <div className="columns">
+        <div className="column">
+          <MemoizedInfoComponent {...blockState} />
         </div>
-          <MemoizedInfoViaHashesComponent {...this.state} onClickHash={this.getAndUpdateBlockHash} />
-      </div>      
-    );
-    
-  }
+      </div>
+        <MemoizedInfoViaHashesComponent {...blockState} onClickHash={getAndUpdateBlockHash} />
+    </div>      
+  );
+
+
 }
 
-const mapDispatchToProps = dispatch => {
-	return {
-    updateErrorState: (args) => {
-      dispatch(updateErrorState(args));
-    },
-    updateBlockHash: (args) => {
-      dispatch(updateBlockHash(args));
-    },
-  };
-};
-
-const mapStateToProps = state => {
-	return {
-    blockHash: state.BlockReducer.blockHash,
-		clientError: state.AppReducer.clientError,
-  };
-};
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Block);
+export default Block

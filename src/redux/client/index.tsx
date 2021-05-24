@@ -1,13 +1,12 @@
 import { put  } from 'redux-saga/effects';
 import { sagaWatcherHelper } from '../../utils';
-import { BASE_URL } from '../../configs';
 import { GrpcManager } from '../../managers';
  
 // Error types
 enum ClientErrors{
   NOT_INITIATED = "NOT_INITIATED",
   UNABLE_TO_CONNECT = "UNABLE_TO_CONNECT",
-	NOT_AVAILABLE = "NOT_AVAILABLE"
+  NOT_AVAILABLE = "NOT_AVAILABLE"
 }
 
 // Types

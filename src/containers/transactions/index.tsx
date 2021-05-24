@@ -2,15 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, } from 'react-redux';
 import * as grpcWeb from 'grpc-web';
 
-import { TxnDisplay } from './components/TxnDisplay';
+import { MemoizedTxnDisplay } from './components/TxnDisplay';
 
 import { updateErrorState, updateTxHash } from '../../redux';
 import { TransactionNotification } from '../../protos/bchrpc_pb'
 import { GrpcManager } from '../../managers';
 import { base64toU8, u8toHex } from '../../utils';
 
-// Memoized Component
-const MemoizedTxnDisplay = React.memo(TxnDisplay);
 
 // Interfaces
 

@@ -61,6 +61,6 @@ export const TxInfo = ({
           </article>
         </div>
       </div>
-      </>
-    )
-  }
+    </>
+  )
+}

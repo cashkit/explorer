@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { createSelector } from 'reselect'
+import { useDispatch,  } from 'react-redux';
 
-import { BlockchainInfo } from './components/BlockchainInfo';
+import { MemoizedInfoComponent } from './components/BlockchainInfo';
 
-import { updateErrorState, updateBlockHash, RootState } from '../../redux';
+import { updateErrorState, updateBlockHash } from '../../redux';
 import { GetBlockchainInfoResponse } from '../../protos/bchrpc_pb';
 import { base64toU8, u8toHex } from '../../utils';
 import { GrpcManager } from '../../managers';
 
-/**
- * From React Docs:
- * If your component renders the same result given the same props,
- * you can wrap it in a call to React.memo for a performance boost
- * in some cases by memoizing the result. This means that React will
- * skip rendering the component, and reuse the last rendered result.
- */
-const MemoizedInfoComponent = React.memo(BlockchainInfo);
 
 // Initial States
 
@@ -35,18 +26,10 @@ const initialMempoolState = {
   mempoolSize: 0,
 }
 
-// Custom selector
-
-// const selectClient= createSelector(
-//     (state: RootState) => state.AppReducer,
-//     AppReducer => AppReducer.client
-// )
-
 // Custom hooks
 
 const useBlockchainInfoHook = () => {
   const [blockchainState, setBlockchainInfoState] = useState(initialState)
-  // const client = useSelector(selectClient)
   const dispatch = useDispatch()
   useEffect(() => {
     GrpcManager.Instance.getBlockchainInfo().then((res) => {
@@ -63,14 +46,14 @@ const useBlockchainInfoHook = () => {
       console.log("[ERR] getBlockchainInfo: ", err)
       dispatch(updateErrorState({ clientError: JSON.stringify(err) }))
     })
-  }, [dispatch])
+  // eslint-disable-next-line
+  }, [])
 
   return blockchainState
 }
 
 const useMempoolInfoHook = () => {
   const [mempoolState, setLocalMempoolState] = useState(initialMempoolState)
-  // const client = useSelector(selectClient)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -79,8 +62,9 @@ const useMempoolInfoHook = () => {
     }).catch((err) => {
         console.log("[ERR] getMempoolInfo: ", err)
         dispatch(updateErrorState({ clientError: JSON.stringify(err) }))
-    }) 
-  }, [dispatch])
+    })
+  // eslint-disable-next-line
+  }, [])
 
   return mempoolState
 }
