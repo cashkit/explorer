@@ -1,20 +1,16 @@
 import React from 'react';
 import { Transaction } from '../../../protos/bchrpc_pb';
-
+import { truncate } from '../../../utils';
 
 export interface TxInfoInputOutputHashesProps {
   inputsList: Array<Transaction.Input.AsObject>,
   outputsList: Array<Transaction.Output.AsObject>,
-  onClickHash: (txHash: Uint8Array | string) => void,
+  onClickMetaData: (txHash: Uint8Array | string) => void,
 }
 
 
-export const TxInfoInputOutputHashes = ({ inputsList, outputsList, onClickHash }
-  : { 
-    inputsList: Array<Transaction.Input.AsObject>,
-    outputsList: Array<Transaction.Output.AsObject>,
-    onClickHash: (txHash: Uint8Array | string) => void,
-  }) => {
+export const TxInfoInputOutputHashes = ({ inputsList, outputsList, onClickMetaData }
+  : TxInfoInputOutputHashesProps) => {
   let InputsComponent;
   if (inputsList){
   InputsComponent = inputsList.map((input) => {

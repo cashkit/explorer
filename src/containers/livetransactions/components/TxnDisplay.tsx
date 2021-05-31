@@ -2,7 +2,7 @@ import React, { Profiler } from 'react';
 
 export interface TxnDisplayInterface {
   transaction: string,
-  onClickTransaction: Function
+  onClickMetaData: Function
 }
 
 /**
@@ -10,7 +10,7 @@ export interface TxnDisplayInterface {
  * Usage:
  *  <Profiler id={transaction} onRender={onRenderProfilerCallback}>
  *    <p key={transaction}>
- *       transaction: <a onClick={() => onClickTransaction(transaction)} className="content">{transaction}</a>
+ *       transaction: <a onClick={() => onClickMetaData(transaction)} className="content">{transaction}</a>
  *    </p>
  *  </Profiler>
  * 
@@ -35,13 +35,13 @@ export interface TxnDisplayInterface {
 
 /**
  * @param transaction: Transaction hash
- * @param onClickTransaction: Callback function for click event on transaction hash.
+ * @param onClickMetaData: Callback function for click event on transaction hash.
  * @returns 
 */
-export const TxnDisplay = ({transaction, onClickTransaction}: TxnDisplayInterface ) => {
+export const TxnDisplay = ({transaction, onClickMetaData}: TxnDisplayInterface ) => {
   return (
       <p key={transaction}>
-        transaction: <a onClick={() => onClickTransaction(transaction)} className="content">{transaction}</a>
+        transaction: <a onClick={() => onClickMetaData(transaction)} className="content">{transaction}</a>
       </p>
   )
 }

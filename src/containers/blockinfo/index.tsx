@@ -167,7 +167,7 @@ const Block = () => {
               value={blockHashState.blockHash}
               onChange={onChangeSearchValue}
               ref={searchBlockInputRef}
-              className="input is-rounded is-large"
+              className="input is-large"
               type="text"
               placeholder="block hash"
             />
@@ -183,14 +183,14 @@ const Block = () => {
   }
 
   return (
-    <div className="box">
+    <div className="">
       {renderSearch()}
       <div className="columns">
         <div className="column">
           <MemoizedInfoComponent {...blockState} />
         </div>
       </div>
-        <MemoizedInfoViaHashesComponent {...blockState} onClickHash={getAndUpdateBlockHash} />
+        <MemoizedInfoViaHashesComponent {...blockState} onClickMetaData={getAndUpdateBlockHash} />
     </div>      
   );
 

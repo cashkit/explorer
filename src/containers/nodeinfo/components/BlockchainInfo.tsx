@@ -91,7 +91,7 @@ export const BlockchainInfo = ({ bitcoinNet, bestHeight, bestBlockHash,
       </div>
       <div className="tile is-ancestor">
         <div className="tile is-parent">
-          <article className="tile is-child box has-text-left notification is-primary">
+          <article className="tile is-child box has-text-left">
             <p className="is-size-4 has-text-weight-medium">Best Block Hash</p>
             <div className="content">
               {bestBlockHash}

@@ -1,28 +1,29 @@
 import React from 'react';
+import { truncate } from '../../../utils';
 
 export interface BlockInfoViaHashesProps {
     hash: Uint8Array | string,
     previousBlock: Uint8Array | string,
     merkleRoot: Uint8Array | string,
     nextBlockHash: Uint8Array | string,
-    onClickHash: (blockHash: Uint8Array | string) => void,
+    onClickMetaData: (blockHash: Uint8Array | string) => void,
 }
 
-export const BlockInfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockHash, onClickHash }
+export const BlockInfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockHash, onClickMetaData }
     : BlockInfoViaHashesProps) => {
   return(
     <>
       <div className="tile is-ancestor">
         <div className="tile is-parent">
-          <article className="tile is-child box has-text-left notification is-primary">
+          <article className="tile is-child box has-text-left">
             <p className="is-size-4 has-text-weight-medium">Block Hash</p>
-            <div className="content">{hash}</div>
+            <div className="content">{truncate(hash)}</div>
           </article>
         </div>
         <div className="tile is-parent">
           <article className="tile is-child box has-text-left  is-info">
             <p className="is-size-4 has-text-weight-medium">Previous Block</p>
-            <a className="content" onClick={() => onClickHash(previousBlock)}>{previousBlock}</a>
+            <a className="content" onClick={() => onClickMetaData(previousBlock)}>{truncate(previousBlock)}</a>
           </article>
         </div>
       </div>
@@ -30,13 +31,13 @@ export const BlockInfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockH
         <div className="tile is-parent">
           <article className="tile is-child box has-text-left  is-info">
             <p className="is-size-4 has-text-weight-medium">Merkle Root</p>
-            <div className="content">{merkleRoot}</div>
+            <div className="content">{truncate(merkleRoot)}</div>
           </article>
         </div>
         <div className="tile is-parent">
           <article className="tile is-child box has-text-left  is-info">
             <p className="is-size-4 has-text-weight-medium">Next Block Hash</p>
-            <a className="content" onClick={() => onClickHash(nextBlockHash)}>{nextBlockHash}</a>
+            <a className="content" onClick={() => onClickMetaData(nextBlockHash)}>{truncate(nextBlockHash)}</a>
           </article>
         </div>
       </div>

@@ -150,7 +150,7 @@ const TransactionInfo = () => {
    * @param txHash : Expects a transaction hash and makes an RPC call from via the client.
    * The returned data is then used to update local state to be displayed later.
    */
-  const getAndUpdateTxHash = (txHash) => {
+  const onClickTxHash = (txHash) => {
     fetchTxDetails({ txHash })
   }
 
@@ -163,7 +163,7 @@ const TransactionInfo = () => {
             <input value={txHashState.txHash}
               onChange={onChangeSearchVal}
               ref={searchTxInputRef}
-              className="input is-rounded is-large"
+              className="input is-large"
               type="text"
               placeholder="Txn hash"
             />
@@ -179,7 +179,7 @@ const TransactionInfo = () => {
   }
 
     return (
-      <div className="box">
+      <div>
         {renderSearch()}
         <div className="columns">
           <div className="column ">
@@ -188,11 +188,11 @@ const TransactionInfo = () => {
         </div>
           <MemoizedInfoViaHashesComponent
             {...txnState}
-            onClickHash={getAndUpdateTxHash}
+            onClickMetaData={onClickTxHash}
           />
           <TxInfoInputOutputHashes 
             {...txnState}
-            onClickHash={getAndUpdateTxHash}
+            onClickMetaData={onClickTxHash}
           />
       </div>
       

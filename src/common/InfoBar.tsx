@@ -34,7 +34,7 @@ export const InfoBar = () => {
     if (isVisible){
       return (
         <>
-        <div className="column">
+        <div className="column" style={{ color: 'black' }}>
           {clientError || ""}
         </div>
         <button className="button is-danger" onClick={toggleVisible}>X</button>
@@ -46,7 +46,6 @@ export const InfoBar = () => {
 
   return (
     <div className="notification columns" style={{
-      backgroundColor: "#85f1a5",
       color: 'white',
       position: "sticky",
       zIndex: 10,

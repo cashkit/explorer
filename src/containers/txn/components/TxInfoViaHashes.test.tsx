@@ -6,7 +6,7 @@ import { TxInfoViaHashes, TxInfoViaHashesProps } from './TxInfoViaHashes';
 const props: TxInfoViaHashesProps = {
     hash: "",
     blockHash: "",
-    onClickHash: (txHash: Uint8Array | string) => {},
+    onClickMetaData: (txHash: Uint8Array | string) => {},
 }
 
 it('<TxInfoViaHashes/> renders correctly', () => {

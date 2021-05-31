@@ -1,4 +1,4 @@
-import React, { lazy, useEffect, useRef } from 'react';
+import React, { lazy, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { ErrorBoundary } from '../../common';
@@ -6,14 +6,23 @@ import { checkClient } from '../../redux';
 import { InfoBar } from '../../common';
 import { useDispatch } from 'react-redux';
 
+import Navigation from './navigation';
 const NodeInfo = lazy(() => import("../../containers/nodeinfo"));
-const Transactions = lazy(() => import("../../containers/transactions"));
+const LiveTransactions = lazy(() => import("../../containers/livetransactions"));
 const BlockInfo = lazy(() => import("../../containers/blockinfo"));
 const TxInfo = lazy(() => import("../../containers/txn"));
+const AddressInfo = lazy(() => import("../../containers/address"));
 
+enum Sections {
+  NODE_INFO = 0,
+  LIVE_TRANSACTIONS = 1,
+  BLOCK_INFO = 2,
+  TRANSACTION_INFO = 3,
+  ADDRESS_INFO = 4
+}
 
 const Landing = () => {
-
+  const [ currentSection, setSection ] = useState(Sections.NODE_INFO)
   const txInfoRef = useRef<any>(null);
   const dispatch = useDispatch()
 
@@ -21,6 +30,11 @@ const Landing = () => {
     dispatch(checkClient())
   // eslint-disable-next-line
   }, [])
+
+  useEffect(() => {
+    
+  // eslint-disable-next-line
+  }, [currentSection])
 
   /**
    * Usage:
@@ -47,10 +61,80 @@ const Landing = () => {
     )
   }
 
-  const executeScroll = (ref) => {
-    ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const onTxClick = (ref) => {
+    setSection(Sections.TRANSACTION_INFO)
+    // ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  const setCurrentSection = (arg) => {
+    if (arg != currentSection){
+      setSection(arg)
+    }
+  }
+
+  const renderNodeInfo = () => {
+    if (currentSection == Sections.NODE_INFO) {
+      return (
+        <div className="section visibility: hidden;">            
+          <ErrorBoundary>
+            <NodeInfo/>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+    return undefined
+  }
+
+  const renderLiveTransactions = () => {
+    const hidden = currentSection != Sections.LIVE_TRANSACTIONS
+      return (
+        <div className="section hidden">            
+          <ErrorBoundary>
+            <LiveTransactions hidden={hidden} onTxClick={() => onTxClick(txInfoRef)}/>
+          </ErrorBoundary>
+        </div>
+      )
+  }
+
+  const renderBlockInfo = () => {
+    if (currentSection == Sections.BLOCK_INFO) {
+      return (
+        <div className="section">            
+          <ErrorBoundary>
+            <BlockInfo/>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+    return undefined
+  }
+
+  const renderTxInfo = () => {
+    if (currentSection == Sections.TRANSACTION_INFO) {
+      return (
+        <div className="section" ref={txInfoRef}>            
+          <ErrorBoundary>
+            <TxInfo/>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+    return undefined
+  }
+
+  const renderAddressInfo = () => {
+    if (currentSection == Sections.ADDRESS_INFO) {
+      return (
+        <div className="section">            
+          <ErrorBoundary>
+            <AddressInfo/>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+    return undefined
+  }
+  
   return (
     <div className="App">
         <Helmet
@@ -60,32 +144,19 @@ const Landing = () => {
           <meta name="description" content="Dashboard: A CashWeb application" />
         </Helmet>
         <InfoBar/>
-
-        <div className="section">            
-          <div className="columns">
-            <div className="column">
-              <ErrorBoundary>
-                <NodeInfo/>
-              </ErrorBoundary>
-            </div>
-            <div className="column">
-              <ErrorBoundary>
-                <Transactions scrollToTransactionDetails={() => executeScroll(txInfoRef)}/>
-              </ErrorBoundary>
-            </div>
+        <div className="columns">
+          
+          <div className="column is-2">
+            <Navigation setCurrentSection={(arg) => setCurrentSection(arg)}/>
           </div>
-        </div>
-
-        <div className="section">            
-          <ErrorBoundary>
-            <BlockInfo/>
-          </ErrorBoundary>
-        </div>
-
-        <div className="section" ref={txInfoRef}>            
-          <ErrorBoundary>
-            <TxInfo/>
-          </ErrorBoundary>
+          
+          <div className="column">
+            {renderNodeInfo()}
+            {renderBlockInfo()}
+            {renderTxInfo()}
+            {renderAddressInfo()}
+            {renderLiveTransactions()}
+          </div>
         </div>
         
         <footer className="footer">

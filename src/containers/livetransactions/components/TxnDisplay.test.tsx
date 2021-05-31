@@ -4,7 +4,7 @@ import { TxnDisplay, TxnDisplayInterface } from './TxnDisplay';
 
 const props: TxnDisplayInterface = {
     transaction: "",
-    onClickTransaction: () => {}
+    onClickMetaData: () => {}
 }
 
 it('<TxnDisplay/> renders correctly', () => {

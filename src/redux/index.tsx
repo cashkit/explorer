@@ -6,9 +6,11 @@ import { createLogger } from 'redux-logger'
 
 import { AppReducer, watcherCheckClient, checkClient, updateErrorState } from './client';
 import { BlockReducer, updateBlockHash } from './block';
+import { AddressReducer, updateAddress } from './address';
 import { TxReducer, updateTxHash } from './txn';
 
 const reducers = combineReducers({
+	AddressReducer,
 	AppReducer,
 	BlockReducer,
 	TxReducer
@@ -46,6 +48,7 @@ export type AppDispatch = typeof store.dispatch
 export {
 	checkClient,
 	store,
+	updateAddress,
 	updateBlockHash,
 	updateErrorState,
 	updateTxHash
