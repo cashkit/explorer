@@ -41,4 +41,6 @@ const Navigation = (props: NavigationProps) => {
   )
 }
 
-export default Navigation;
+export {
+  Navigation, Sections
+}

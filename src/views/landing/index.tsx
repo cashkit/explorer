@@ -6,20 +6,13 @@ import { checkClient } from '../../redux';
 import { InfoBar } from '../../common';
 import { useDispatch } from 'react-redux';
 
-import Navigation from './navigation';
+import { Navigation, Sections} from './navigation';
 const NodeInfo = lazy(() => import("../../containers/nodeinfo"));
 const LiveTransactions = lazy(() => import("../../containers/livetransactions"));
 const BlockInfo = lazy(() => import("../../containers/blockinfo"));
 const TxInfo = lazy(() => import("../../containers/txn"));
 const AddressInfo = lazy(() => import("../../containers/address"));
 
-enum Sections {
-  NODE_INFO = 0,
-  LIVE_TRANSACTIONS = 1,
-  BLOCK_INFO = 2,
-  TRANSACTION_INFO = 3,
-  ADDRESS_INFO = 4
-}
 
 const Landing = () => {
   const [ currentSection, setSection ] = useState(Sections.NODE_INFO)
@@ -32,7 +25,7 @@ const Landing = () => {
   }, [])
 
   useEffect(() => {
-    
+  // Get's called when Current Section changes.
   // eslint-disable-next-line
   }, [currentSection])
 
