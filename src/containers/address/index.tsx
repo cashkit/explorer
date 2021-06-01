@@ -20,7 +20,11 @@ const localAddressState = {
   AddressReducer => AddressReducer.address
 )
 
-const Address = () => {
+interface AddressProps {
+  hidden: boolean
+}
+
+const Address = (props: AddressProps) => {
   const [localAddress, setLocalAddress] = useState(localAddressState);
   const dispatch = useDispatch();
   const searchAddressInputRef = useRef<any>(null);
@@ -30,12 +34,12 @@ const Address = () => {
   * Acts as ComponentWillReceiveProps, listens to changes to resAddr and updates the local state.
   * if the value is changed.
   */
-   useEffect(() => {
-    if (resAddr && resAddr != ""){
-      setLocalAddress({ address: resAddr })
-    }
-  // eslint-disable-next-line
-  }, [])
+  //  useEffect(() => {
+  //   if (resAddr && resAddr != ""){
+  //     setLocalAddress({ address: resAddr })
+  //   }
+  // // eslint-disable-next-line
+  // }, [])
 
   /**
   * Acts as ComponentWillReceiveProps, listens to changes to resAddr and updates the local state.
@@ -58,8 +62,9 @@ const Address = () => {
       const address = ref.value;
       // TODO: Add other checks as welk.
       if (address != "") {
+        console.log("Updating?")
         dispatch(updateAddress({ address }))
-        setLocalAddress({ address })
+        // setLocalAddress({ address })
       }
     }
   }
@@ -100,11 +105,14 @@ const Address = () => {
     )
   }
 
+  if (props.hidden) return <div/>
+  console.log("Rendering Address", resAddr)
+
   return (
-    <div className="">
+    <div className="section">
       {renderSearch()}
-      <MemoizedAddressTX address={localAddress.address} />
-      <MemoizedAddressUTXO address={localAddress.address} />
+      <MemoizedAddressTX address={resAddr} />
+      <MemoizedAddressUTXO address={resAddr} />
     </div>      
   );
 

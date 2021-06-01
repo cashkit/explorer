@@ -28,16 +28,6 @@ const AddressUTXO = (props: AddressUTXOProps) => {
   const dispatch = useDispatch();
 
   /**
-   * Acts as ComponentDidMount, tries to fetch blockdetails if address is valid.
-   */
-  useEffect(() => {
-    if (address && address != "") {
-      fetchAddressUTXODetails({ address })
-    }
-  // eslint-disable-next-line
-  }, [])
-
-  /**
    * Acts as ComponentWillReceiveProps, listens to changes to addr and calls 
    * `fetchAddressUTXODetails` if the value is changed/updated.
    */

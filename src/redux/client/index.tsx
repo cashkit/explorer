@@ -40,6 +40,12 @@ export const updateErrorState = ({clientError}) => {
 export const AppReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case UPDATE_ERROR_STATE:
+			if (state.clientError){
+				// If an error already exists then just return the state.
+				// in future one can introduce a list of errors appended one after another but
+				// that is not a best user experience.
+				return state;
+			}
 			// Make sure to pass the state to retain other value in the props of components.
 			// For example if you only set the clientError here then all the other props
 			// will be set to undefined in the next render of the components.

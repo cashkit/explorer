@@ -139,7 +139,7 @@ const LiveTransactions = (props: LiveTransactionsProps) => {
   if (props.hidden){ return <div/> }
 
   return (
-    <div className="column">
+    <div className="section">
       <div className="columns">
         <h1 className="title column">Live Transactions</h1>
         <a className="button is-primary" onClick={toggleSubscription}>{isPaused ? "Subscribe" : "Unsubscribe"}</a>

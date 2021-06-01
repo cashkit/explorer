@@ -28,16 +28,6 @@ const AddressTX = (props: AddressTXProps) => {
   const dispatch = useDispatch();
 
   /**
-   * Acts as ComponentDidMount, tries to fetch blockdetails if address is valid.
-   */
-  useEffect(() => {
-    if (address && address != "") {
-        fetchAddressTxDetails({ address })
-    }
-  // eslint-disable-next-line
-  }, [])
-
-  /**
    * Acts as ComponentWillReceiveProps, listens to changes to addr and calls `fetchAddressTxDetails`
    * if the value is changed/updated.
    */
@@ -45,7 +35,6 @@ const AddressTX = (props: AddressTXProps) => {
     address && fetchAddressTxDetails({ address })
   // eslint-disable-next-line
   }, [address])
-
 
   /**
    * 

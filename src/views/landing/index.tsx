@@ -74,11 +74,9 @@ const Landing = () => {
   const renderNodeInfo = () => {
     if (currentSection == Sections.NODE_INFO) {
       return (
-        <div className="section visibility: hidden;">            
-          <ErrorBoundary>
-            <NodeInfo onClickBlockHash={onClickBlockHash}/>
-          </ErrorBoundary>
-        </div>
+        <ErrorBoundary>
+          <NodeInfo onClickBlockHash={onClickBlockHash}/>
+        </ErrorBoundary>
       )
     }
     return undefined
@@ -91,52 +89,40 @@ const Landing = () => {
    */
   const renderLiveTransactions = () => {
     const hidden = currentSection != Sections.LIVE_TRANSACTIONS
-      return (
-        <div className="section hidden">            
-          <ErrorBoundary>
-            <LiveTransactions hidden={hidden} onClickTx={onClickTx}/>
-          </ErrorBoundary>
-        </div>
-      )
+    return (
+      <ErrorBoundary>
+        <LiveTransactions hidden={hidden} onClickTx={onClickTx}/>
+      </ErrorBoundary>
+    )
   }
 
   const renderBlockInfo = () => {
-    if (currentSection == Sections.BLOCK_INFO) {
-      return (
-        <div className="section">            
-          <ErrorBoundary>
-            <BlockInfo/>
-          </ErrorBoundary>
-        </div>
-      )
-    }
-    return undefined
+    const hidden = currentSection != Sections.BLOCK_INFO
+    return (
+      <ErrorBoundary>
+        <BlockInfo hidden={hidden}/>
+      </ErrorBoundary>
+    )
   }
 
   const renderTxInfo = () => {
     if (currentSection == Sections.TRANSACTION_INFO) {
       return (
-        <div className="section">            
-          <ErrorBoundary>
-            <TxInfo onClickAddress={onClickAddress}/>
-          </ErrorBoundary>
-        </div>
+        <ErrorBoundary>
+          <TxInfo onClickAddress={onClickAddress}/>
+        </ErrorBoundary>
       )
     }
     return undefined
   }
 
   const renderAddressInfo = () => {
-    if (currentSection == Sections.ADDRESS_INFO) {
-      return (
-        <div className="section">            
-          <ErrorBoundary>
-            <AddressInfo/>
-          </ErrorBoundary>
-        </div>
-      )
-    }
-    return undefined
+    const hidden = currentSection != Sections.ADDRESS_INFO
+    return (
+      <ErrorBoundary>
+        <AddressInfo hidden={hidden}/>
+      </ErrorBoundary>
+    )
   }
   
   return (

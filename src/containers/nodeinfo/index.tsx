@@ -91,14 +91,14 @@ const NodeInfo = (props: NodeInfoProps) => {
   }
 
   return (
-    <>
+    <div className="section">
       <h1 className="title">Node Information</h1>
       <MemoizedInfoComponent
         {...blockchainState}
         {...mempoolState}
         onClickBlockHash={(blockHash) => onClickBlockHash(blockHash)}
       />
-    </>
+    </div>
   )
 }
 

@@ -154,8 +154,8 @@ const TransactionInfo = (props: TransactionInfoProps) => {
    * The returned data is then used to update local state to be displayed later.
    */
   const onClickAddress = (address) => {
-    dispatch(updateAddress({ address }))
     props.onClickAddress()
+    dispatch(updateAddress({ address }))
   }
 
   const renderSearch = () => {
@@ -182,22 +182,22 @@ const TransactionInfo = (props: TransactionInfoProps) => {
     )
   }
 
-    return (
-      <div>
-        {renderSearch()}
-        <div className="columns">
-          <div className="column ">
-            <TxInfo {...txnState} />
-          </div>
+  return (
+    <div className="section">
+      {renderSearch()}
+      <div className="columns">
+        <div className="column ">
+          <TxInfo {...txnState} />
         </div>
-          <MemoizedInfoViaHashesComponent {...txnState} onClickBlockHash={() => {}} />
-          <TxInfoInputOutputHashes 
-            {...txnState}
-            onClickAddress={onClickAddress}
-          />
       </div>
-      
-    );
+        <MemoizedInfoViaHashesComponent {...txnState} onClickBlockHash={() => {}} />
+        <TxInfoInputOutputHashes 
+          {...txnState}
+          onClickAddress={onClickAddress}
+        />
+    </div>
+    
+  );
 }
 
 export default TransactionInfo

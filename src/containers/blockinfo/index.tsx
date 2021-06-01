@@ -40,7 +40,11 @@ const blockHashSelector = createSelector(
     BlockReducer => BlockReducer.blockHash
 )
 
-const Block = () => {
+interface BlockProps {
+  hidden: boolean
+}
+
+const Block = (props: BlockProps) => {
   const [blockHashState, setLocalBlockHash] = useState(initialBlockHashState);
   const [blockState, setBlockState] = useState(initialState);
   const dispatch = useDispatch();
@@ -132,7 +136,6 @@ const Block = () => {
   const onSearchBlock = () => {
     const ref = searchBlockInputRef.current
     if (ref?.value){
-      fetchBlockDetails({ blockHash: ref.value })
       dispatch(updateBlockHash({ blockHash: ref.value }))
     }
   }
@@ -182,8 +185,10 @@ const Block = () => {
     )
   }
 
+  if (props.hidden) return <div/>
+
   return (
-    <div className="">
+    <div className="section">
       {renderSearch()}
       <div className="columns">
         <div className="column">

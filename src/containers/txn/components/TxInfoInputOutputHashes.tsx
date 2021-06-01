@@ -12,16 +12,16 @@ export const TxInfoInputOutputHashes = ({ inputsList, outputsList, onClickAddres
   : TxInfoInputOutputHashesProps) => {
   let InputsComponent;
   if (inputsList){
-  InputsComponent = inputsList.map((input) => {
+  InputsComponent = inputsList.map((input, index) => {
       const addr = input.address
-       return <div key={addr} ><a onClick={() => onClickAddress(addr)} className="content">bitcoincash:{addr}</a></div>
+       return <div key={addr+index} ><a onClick={() => onClickAddress(addr)} className="content">bitcoincash:{addr}</a></div>
      })
   }
   let OutputsComponent;
   if (outputsList){
-  OutputsComponent = outputsList.map((output) => {
+  OutputsComponent = outputsList.map((output, index) => {
        const addr = output.address
-       return <div key={addr} ><a onClick={() => onClickAddress(addr)} className="content">bitcoincash:{addr}</a></div>
+       return <div key={addr+index} ><a onClick={() => onClickAddress(addr)} className="content">bitcoincash:{addr}</a></div>
      })
   }
 return(

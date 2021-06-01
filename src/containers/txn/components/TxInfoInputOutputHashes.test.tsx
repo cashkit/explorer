@@ -5,7 +5,7 @@ import { TxInfoInputOutputHashes, TxInfoInputOutputHashesProps } from './TxInfoI
 const props: TxInfoInputOutputHashesProps = {
     inputsList: [],
     outputsList: [],
-    onClickMetaData: (txHash: Uint8Array | string) => {},
+    onClickAddress: (txHash: Uint8Array | string) => {},
 }
 
 it('<TxInfoInputOutputHashes/> renders correctly', () => {
