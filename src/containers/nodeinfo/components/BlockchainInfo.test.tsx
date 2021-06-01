@@ -1,9 +1,9 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { BlockchainInfo, BlockchainInfoProps } from './BlockchainInfo';
+import { BlockchainInfo, BlockchainInfoInterface } from './BlockchainInfo';
 
 
-const props: BlockchainInfoProps = {
+const props: BlockchainInfoInterface = {
     bitcoinNet: 0,
     bestHeight: 0,
     bestBlockHash: "",
@@ -12,7 +12,8 @@ const props: BlockchainInfoProps = {
     txIndex: false,
     addrIndex: false,
     slpIndex: false,
-    mempoolSize: 0
+    mempoolSize: 0,
+    onClickBlockHash: () => {}
 }
 
 it('<BlockchainInfo/> renders correctly', () => {

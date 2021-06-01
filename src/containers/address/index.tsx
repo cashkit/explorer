@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from 'reselect'
 
-import { updateAddress } from '../../redux';
+import { updateAddress, RootState } from '../../redux';
 
 import MemoizedAddressTX from './AddressTxs';
 import MemoizedAddressUTXO from './AddressUTXOs';
@@ -11,11 +12,41 @@ const localAddressState = {
     address: ""
 }
 
+/**
+ * Fetch the value of address from the redux store.
+ */
+ const addressSelector = createSelector(
+  (state: RootState) => state.AddressReducer,
+  AddressReducer => AddressReducer.address
+)
 
 const Address = () => {
   const [localAddress, setLocalAddress] = useState(localAddressState);
   const dispatch = useDispatch();
   const searchAddressInputRef = useRef<any>(null);
+  const resAddr = useSelector(addressSelector)
+
+  /**
+  * Acts as ComponentWillReceiveProps, listens to changes to resAddr and updates the local state.
+  * if the value is changed.
+  */
+   useEffect(() => {
+    if (resAddr && resAddr != ""){
+      setLocalAddress({ address: resAddr })
+    }
+  // eslint-disable-next-line
+  }, [])
+
+  /**
+  * Acts as ComponentWillReceiveProps, listens to changes to resAddr and updates the local state.
+  * if the value is changed.
+  */
+  useEffect(() => {
+    if (resAddr && resAddr != ""){
+      setLocalAddress({ address: resAddr })
+    }
+  // eslint-disable-next-line
+  }, [resAddr])
 
   /**
    * When search button is triggered, this method is responsible for updating the address in the
@@ -28,6 +59,7 @@ const Address = () => {
       // TODO: Add other checks as welk.
       if (address != "") {
         dispatch(updateAddress({ address }))
+        setLocalAddress({ address })
       }
     }
   }

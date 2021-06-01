@@ -1,17 +1,16 @@
 import React from 'react';
 import { truncate } from '../../../utils';
 
-
 export interface TxInfoViaHashesProps {
     hash: Uint8Array | string,
     blockHash: Uint8Array | string,
-    onClickMetaData: (txHash: Uint8Array | string) => void,
+    onClickBlockHash: (txHash: Uint8Array | string) => void,
 }
 
 export const TxInfoViaHashes = ({
     hash,
     blockHash,
-    onClickMetaData, }
+    onClickBlockHash, }
     : TxInfoViaHashesProps) => {
   return(
     <>
@@ -25,7 +24,7 @@ export const TxInfoViaHashes = ({
       <div className="tile is-parent">
         <article className="tile is-child box has-text-left  is-info">
         <p className="is-size-4 has-text-weight-medium">Block Hash</p>
-        <a className="content" onClick={() => onClickMetaData(blockHash)}>{truncate(blockHash)}</a>
+        <a className="content" onClick={() => onClickBlockHash(blockHash)}>{truncate(blockHash)}</a>
         </article>
       </div>
       </div>

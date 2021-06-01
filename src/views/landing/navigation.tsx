@@ -28,7 +28,7 @@ const Navigation = (props: NavigationProps) => {
       <ul className="menu-list">
         <li><a onClick={() => props.setCurrentSection(Sections.ADDRESS_INFO)}>Address</a></li>
         <li><a onClick={() => props.setCurrentSection(Sections.BLOCK_INFO)}>Block</a></li>
-        <li><a onClick={() => props.setCurrentSection(Sections.TRANSACTION_INFO)}>Transactions</a></li>
+        <li><a onClick={() => props.setCurrentSection(Sections.TRANSACTION_INFO)}>Transaction</a></li>
       </ul>
 
       <p className="menu-label">

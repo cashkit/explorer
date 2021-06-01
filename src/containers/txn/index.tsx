@@ -8,7 +8,7 @@ import { TxInfoInputOutputHashes } from './components/TxInfoInputOutputHashes';
 
 import { GrpcManager } from '../../managers';
 import { Transaction } from '../../protos/bchrpc_pb';
-import { updateErrorState, updateTxHash, RootState } from '../../redux';
+import { updateErrorState, updateTxHash, updateAddress, RootState } from '../../redux';
 import { base64toU8, u8toHex } from '../../utils';
 
 
@@ -53,8 +53,11 @@ const txHashSelector = createSelector(
   TxReducer => TxReducer.txHash
 )
 
+interface TransactionInfoProps{
+  onClickAddress: Function
+}
 
-const TransactionInfo = () => {
+const TransactionInfo = (props: TransactionInfoProps) => {
   const [txHashState, setLocalTxHash] = useState(initialTxHashState);
   const [txnState, setTxnState] = useState(initialState)
   const dispatch = useDispatch();
@@ -147,11 +150,12 @@ const TransactionInfo = () => {
 
   /**
    * 
-   * @param txHash : Expects a transaction hash and makes an RPC call from via the client.
+   * @param address : Expects an address and makes an RPC call from via the client.
    * The returned data is then used to update local state to be displayed later.
    */
-  const onClickTxHash = (txHash) => {
-    fetchTxDetails({ txHash })
+  const onClickAddress = (address) => {
+    dispatch(updateAddress({ address }))
+    props.onClickAddress()
   }
 
   const renderSearch = () => {
@@ -186,13 +190,10 @@ const TransactionInfo = () => {
             <TxInfo {...txnState} />
           </div>
         </div>
-          <MemoizedInfoViaHashesComponent
-            {...txnState}
-            onClickMetaData={onClickTxHash}
-          />
+          <MemoizedInfoViaHashesComponent {...txnState} onClickBlockHash={() => {}} />
           <TxInfoInputOutputHashes 
             {...txnState}
-            onClickMetaData={onClickTxHash}
+            onClickAddress={onClickAddress}
           />
       </div>
       

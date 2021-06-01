@@ -1,4 +1,4 @@
-import React, { lazy, useEffect, useRef, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { ErrorBoundary } from '../../common';
@@ -16,7 +16,6 @@ const AddressInfo = lazy(() => import("../../containers/address"));
 
 const Landing = () => {
   const [ currentSection, setSection ] = useState(Sections.NODE_INFO)
-  const txInfoRef = useRef<any>(null);
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -54,9 +53,16 @@ const Landing = () => {
     )
   }
 
-  const onTxClick = (ref) => {
+  const onClickTx = () => {
     setSection(Sections.TRANSACTION_INFO)
-    // ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const onClickBlockHash = () => {
+    setSection(Sections.BLOCK_INFO)
+  }
+
+  const onClickAddress = () => {
+    setSection(Sections.ADDRESS_INFO)
   }
 
   const setCurrentSection = (arg) => {
@@ -70,7 +76,7 @@ const Landing = () => {
       return (
         <div className="section visibility: hidden;">            
           <ErrorBoundary>
-            <NodeInfo/>
+            <NodeInfo onClickBlockHash={onClickBlockHash}/>
           </ErrorBoundary>
         </div>
       )
@@ -78,12 +84,17 @@ const Landing = () => {
     return undefined
   }
 
+  /**
+   * This component does not rely on current section.
+   * By default the transactions are subscribed and user can go to the
+   * Live Transactions Section and unsubscribe.
+   */
   const renderLiveTransactions = () => {
     const hidden = currentSection != Sections.LIVE_TRANSACTIONS
       return (
         <div className="section hidden">            
           <ErrorBoundary>
-            <LiveTransactions hidden={hidden} onTxClick={() => onTxClick(txInfoRef)}/>
+            <LiveTransactions hidden={hidden} onClickTx={onClickTx}/>
           </ErrorBoundary>
         </div>
       )
@@ -105,9 +116,9 @@ const Landing = () => {
   const renderTxInfo = () => {
     if (currentSection == Sections.TRANSACTION_INFO) {
       return (
-        <div className="section" ref={txInfoRef}>            
+        <div className="section">            
           <ErrorBoundary>
-            <TxInfo/>
+            <TxInfo onClickAddress={onClickAddress}/>
           </ErrorBoundary>
         </div>
       )

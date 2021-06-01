@@ -8,7 +8,7 @@ const props: BlockInfoViaHashesProps = {
   previousBlock: "",
   merkleRoot: "",
   nextBlockHash: "",
-  onClickMetaData: () => {},
+  onClickBlockHash: () => {},
 }
 
 it('<BlockInfoViaHashes/> renders correctly', () => {

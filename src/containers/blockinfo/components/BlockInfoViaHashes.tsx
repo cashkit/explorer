@@ -6,10 +6,10 @@ export interface BlockInfoViaHashesProps {
     previousBlock: Uint8Array | string,
     merkleRoot: Uint8Array | string,
     nextBlockHash: Uint8Array | string,
-    onClickMetaData: (blockHash: Uint8Array | string) => void,
+    onClickBlockHash: (blockHash: Uint8Array | string) => void,
 }
 
-export const BlockInfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockHash, onClickMetaData }
+export const BlockInfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockHash, onClickBlockHash }
     : BlockInfoViaHashesProps) => {
   return(
     <>
@@ -23,7 +23,7 @@ export const BlockInfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockH
         <div className="tile is-parent">
           <article className="tile is-child box has-text-left  is-info">
             <p className="is-size-4 has-text-weight-medium">Previous Block</p>
-            <a className="content" onClick={() => onClickMetaData(previousBlock)}>{truncate(previousBlock)}</a>
+            <a className="content" onClick={() => onClickBlockHash(previousBlock)}>{truncate(previousBlock)}</a>
           </article>
         </div>
       </div>
@@ -37,7 +37,7 @@ export const BlockInfoViaHashes = ({ hash, previousBlock, merkleRoot, nextBlockH
         <div className="tile is-parent">
           <article className="tile is-child box has-text-left  is-info">
             <p className="is-size-4 has-text-weight-medium">Next Block Hash</p>
-            <a className="content" onClick={() => onClickMetaData(nextBlockHash)}>{truncate(nextBlockHash)}</a>
+            <a className="content" onClick={() => onClickBlockHash(nextBlockHash)}>{truncate(nextBlockHash)}</a>
           </article>
         </div>
       </div>

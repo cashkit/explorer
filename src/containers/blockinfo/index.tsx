@@ -190,7 +190,7 @@ const Block = () => {
           <MemoizedInfoComponent {...blockState} />
         </div>
       </div>
-        <MemoizedInfoViaHashesComponent {...blockState} onClickMetaData={getAndUpdateBlockHash} />
+        <MemoizedInfoViaHashesComponent {...blockState} onClickBlockHash={getAndUpdateBlockHash} />
     </div>      
   );
 

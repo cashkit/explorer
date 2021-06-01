@@ -14,7 +14,7 @@ import { base64toU8, u8toHex } from '../../utils';
 
 interface LiveTransactionsProps {
   hidden: boolean,
-  onTxClick: () => void,
+  onClickTx: () => void,
 }
 
 // Hooks
@@ -126,9 +126,9 @@ const LiveTransactions = (props: LiveTransactionsProps) => {
    * - Scroll directly to the transaction's detail section.
    * @param hashHex: Expects transaction hash.
    */
-  const onClickMetaData = (hashHex) => {
+  const onClickTx = (hashHex) => {
     dispatch(updateTxHash({txHash: hashHex}))
-    props.onTxClick()
+    props.onClickTx()
   }
 
   const toggleSubscription = () => {
@@ -149,7 +149,7 @@ const LiveTransactions = (props: LiveTransactionsProps) => {
         return <MemoizedTxnDisplay
           key={transaction}
           transaction={transaction}
-          onClickMetaData={() => onClickMetaData(transaction)}
+          onClickTx={() => onClickTx(transaction)}
         />
       })}
     </div>

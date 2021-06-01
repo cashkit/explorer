@@ -10,7 +10,8 @@ export interface BlockchainInfoInterface {
     txIndex: boolean,
     addrIndex: boolean,
     slpIndex: boolean,
-    mempoolSize: number
+    mempoolSize: number,
+    onClickBlockHash: Function
 }
 
 export interface NetworkCodeInterface {
@@ -30,7 +31,7 @@ const getNetworkName = ({networkCode}: NetworkCodeInterface) => {
 }
 
 export const BlockchainInfo = ({ bitcoinNet, bestHeight, bestBlockHash,
-    difficulty, medianTime, txIndex, addrIndex, slpIndex, mempoolSize }
+    difficulty, medianTime, txIndex, addrIndex, slpIndex, mempoolSize, onClickBlockHash }
     : BlockchainInfoInterface) => {
   
   const networkName = getNetworkName({networkCode: bitcoinNet})
@@ -94,7 +95,7 @@ export const BlockchainInfo = ({ bitcoinNet, bestHeight, bestBlockHash,
           <article className="tile is-child box has-text-left">
             <p className="is-size-4 has-text-weight-medium">Best Block Hash</p>
             <div className="content">
-              {bestBlockHash}
+              <a onClick={() => onClickBlockHash(bestBlockHash)}>{bestBlockHash}</a>
             </div>
           </article>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch,  } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { MemoizedInfoComponent } from './components/BlockchainInfo';
 
@@ -8,6 +8,11 @@ import { GetBlockchainInfoResponse } from '../../protos/bchrpc_pb';
 import { base64toU8, u8toHex } from '../../utils';
 import { GrpcManager } from '../../managers';
 
+// interfaces
+
+interface NodeInfoProps {
+  onClickBlockHash: Function
+}
 
 // Initial States
 
@@ -70,14 +75,29 @@ const useMempoolInfoHook = () => {
 }
 
 
-const NodeInfo = () => {
+const NodeInfo = (props: NodeInfoProps) => {
   const blockchainState = useBlockchainInfoHook()
   const mempoolState = useMempoolInfoHook()
+  const dispatch = useDispatch()
+
+  /**
+   * - Update the transaction hash in the redux store.
+   * - Scroll directly to the transaction's detail section.
+   * @param hashHex: Expects transaction hash.
+   */
+   const onClickBlockHash = (blockHash) => {
+    dispatch(updateBlockHash({blockHash}))
+    props.onClickBlockHash()
+  }
 
   return (
     <>
       <h1 className="title">Node Information</h1>
-      <MemoizedInfoComponent {...blockchainState} {...mempoolState} />
+      <MemoizedInfoComponent
+        {...blockchainState}
+        {...mempoolState}
+        onClickBlockHash={(blockHash) => onClickBlockHash(blockHash)}
+      />
     </>
   )
 }

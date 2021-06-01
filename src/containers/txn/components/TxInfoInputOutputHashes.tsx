@@ -5,24 +5,23 @@ import { truncate } from '../../../utils';
 export interface TxInfoInputOutputHashesProps {
   inputsList: Array<Transaction.Input.AsObject>,
   outputsList: Array<Transaction.Output.AsObject>,
-  onClickMetaData: (txHash: Uint8Array | string) => void,
+  onClickAddress: Function
 }
 
-
-export const TxInfoInputOutputHashes = ({ inputsList, outputsList, onClickMetaData }
+export const TxInfoInputOutputHashes = ({ inputsList, outputsList, onClickAddress }
   : TxInfoInputOutputHashesProps) => {
   let InputsComponent;
   if (inputsList){
   InputsComponent = inputsList.map((input) => {
       const addr = input.address
-       return <div key={addr} className="content">bitcoincash:{addr}</div>
+       return <div key={addr} ><a onClick={() => onClickAddress(addr)} className="content">bitcoincash:{addr}</a></div>
      })
   }
   let OutputsComponent;
   if (outputsList){
   OutputsComponent = outputsList.map((output) => {
        const addr = output.address
-       return <div key={addr} className="content">bitcoincash:{addr}</div>
+       return <div key={addr} ><a onClick={() => onClickAddress(addr)} className="content">bitcoincash:{addr}</a></div>
      })
   }
 return(
