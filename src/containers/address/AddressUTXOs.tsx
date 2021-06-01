@@ -18,25 +18,31 @@ const initialUTXOListState: UTXOListInfoState = {
     tokenMetadataList: []
 };
 
+interface AddressUTXOProps {
+  address: string
+}
 
-const AddressUTXO = (address) => {
+const AddressUTXO = (props: AddressUTXOProps) => {
+  const { address } = props
   const [utxoList, setUTXOListState] = useState(initialUTXOListState);
   const dispatch = useDispatch();
 
   /**
-   * Acts as ComponentDidMount, tries to fetch blockdetails if address is defined.
+   * Acts as ComponentDidMount, tries to fetch blockdetails if address is valid.
    */
   useEffect(() => {
-    address && fetchAddressUTXODetails({ address })
+    if (address && address != "") {
+      fetchAddressUTXODetails({ address })
+    }
   // eslint-disable-next-line
   }, [])
 
   /**
-   * Acts as ComponentWillReceiveProps, listens to changes to addr and calls `fetchAddressTxDetails`
-   * as well as `fetchAddressUTXODetails` if the value is changed.
+   * Acts as ComponentWillReceiveProps, listens to changes to addr and calls 
+   * `fetchAddressUTXODetails` if the value is changed/updated.
    */
   useEffect(() => {
-    fetchAddressUTXODetails({ address })
+    address && fetchAddressUTXODetails({ address })
   // eslint-disable-next-line
   }, [address])
 
@@ -47,6 +53,7 @@ const AddressUTXO = (address) => {
    * using the setState method which later updates children components.
    */
   const fetchAddressUTXODetails = ({ address }) => {
+    // TODO: Remove the hard coded `true` value for includeMempool
     GrpcManager.Instance.getAddressUtxos({ address, includeMempool: true })
     .then((res) => {
       const outputsList = res.getOutputsList()
@@ -92,10 +99,10 @@ function areEqual(prevProps, nextProps) {
   the same result as passing prevProps to render,
   otherwise return false
   */
- if (prevProps.address == nextProps.address){
+  if (prevProps.address == nextProps.address){
    return true
- }
- return false
+  }
+  return false
 }
 
 const MemoizedAddressUTXO = React.memo(AddressUTXO, areEqual);

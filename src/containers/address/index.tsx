@@ -25,8 +25,10 @@ const Address = () => {
     const ref = searchAddressInputRef.current
     if (ref?.value){
       const address = ref.value;
-      // fetchAddressTxDetails({ address })
-      dispatch(updateAddress({ address }))
+      // TODO: Add other checks as welk.
+      if (address != "") {
+        dispatch(updateAddress({ address }))
+      }
     }
   }
 

@@ -18,25 +18,31 @@ const initialAddressTxState: AddressTxInfoState = {
     unconf: []
 };
 
+interface AddressTXProps {
+    address: string
+  }
 
-const AddressTX = (address) => {
+const AddressTX = (props: AddressTXProps) => {
+  const { address } = props;
   const [txList, setTransactionsListState] = useState(initialAddressTxState);
   const dispatch = useDispatch();
 
   /**
-   * Acts as ComponentDidMount, tries to fetch blockdetails if address is defined.
+   * Acts as ComponentDidMount, tries to fetch blockdetails if address is valid.
    */
   useEffect(() => {
-    address && fetchAddressTxDetails({ address })
+    if (address && address != "") {
+        fetchAddressTxDetails({ address })
+    }
   // eslint-disable-next-line
   }, [])
 
   /**
    * Acts as ComponentWillReceiveProps, listens to changes to addr and calls `fetchAddressTxDetails`
-   * as well as `fetchAddressTxDetails` if the value is changed.
+   * if the value is changed/updated.
    */
   useEffect(() => {
-    fetchAddressTxDetails({ address })
+    address && fetchAddressTxDetails({ address })
   // eslint-disable-next-line
   }, [address])
 
@@ -47,8 +53,8 @@ const AddressTX = (address) => {
    * using the setState method which later updates children components.
    */
    const fetchAddressTxDetails = ({ address }) => {
-    //GrpcManager.Instance.getAddressUtxos
 
+    // TODO: Remove the hard coded height.
     GrpcManager.Instance.getAddressTransactions({ address, height: 655653 })
     .then((res) => {
         // Convert the address from base64 to hex.\
