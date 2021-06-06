@@ -55,6 +55,7 @@ const useAsyncHook = (pause) => {
       link.current = res;
       link.current.on('data', function(response){
         const base_tx = response.getUnconfirmedTransaction()?.getTransaction()?.getHash_asB64()
+        console.log("Bruh")
         // @ts-ignore
         const b2u = base64toU8(base_tx).reverse()
         const tx_hash = u8toHex(b2u)
